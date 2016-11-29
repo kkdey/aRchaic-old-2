@@ -1,0 +1,44 @@
+#' @title Club signatures from the two strands to remove strand bias
+#'
+#' @description Function for clubbing signatures from the two strands to remove
+#' strnad bias. An example is G->A and C->T are clubbed into C->T to remove the bias
+#' due to whether 5' or 3' ends of the strands has been sequenced.
+#'
+#' @param mat The matrix of counts of all signatures as produced by \code{aggregate_bin_counts}.
+#'
+#' @return Returns a matrix of clubbed signatures. The default choice of the mutation
+#' signatures are C->T, C->A, C->G, T->A, T->C and T->G. The other sets of mutations
+#' like G->A are clubbed to C->T to remove strand bias.
+#'
+#' @keywords aggregate_counts
+#'
+#' @export
+#'
+
+
+club_signature_counts <- function(signature_counts){
+  signature_set <- colnames(signature_counts)
+  new_signature_set <- signatureclub(signature_set)
+
+  signature_set_split <- do.call(rbind, lapply(signature_set, function(x) strsplit(as.character(x), split="")[[1]]))
+
+  indices_G <-  which(signature_set_split[,3]=="G");
+  indices_A <-  which(signature_set_split[,3]=="A");
+
+  indices <- c(indices_G, indices_A);
+
+  signature_set_2 <- signature_set
+  signature_set_2[indices] <- signatureclub(signature_set[indices])
+
+  signature_counts_pooled <- do.call(rbind, lapply(1:dim(signature_counts)[1], function(x) tapply(signature_counts[x,], signature_set_2, sum)))
+  rownames(signature_counts_pooled) <- rownames(signature_counts)
+  temp_split <- do.call(rbind, lapply(colnames(signature_counts_pooled), function(x) strsplit(as.character(x), split="")[[1]]))
+
+  if(length(which(temp_split[,3]=="G")) !=0 || length(which(temp_split[,3]=="A"))!=0){
+    stop("G->A conversion did not fully work; aborting")
+  }
+
+  return(signature_counts_pooled)
+}
+
+
