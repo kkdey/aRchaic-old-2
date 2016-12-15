@@ -4,7 +4,7 @@
 \alias{club_signature_counts}
 \title{Club signatures from the two strands to remove strand bias}
 \usage{
-club_signature_counts(signature_counts)
+club_signature_counts(signature_counts, flanking_bases = 2)
 }
 \arguments{
 \item{mat}{The matrix of counts of all signatures as produced by \code{aggregate_bin_counts}.}

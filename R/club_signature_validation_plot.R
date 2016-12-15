@@ -22,13 +22,13 @@
 #'
 #'
 
-club_signature_validation_plot <- function(signature_counts, cex=1, col="red",
+club_signature_validation_plot <- function(signature_counts, flanking_bases = 2, cex=1, col="red",
                                   pch=20, xlab="C->T", ylab= "G->A",
                                   lty=1, lwd=1, mar=c(5,4,4,4), log=FALSE){
   signature_set <- colnames(signature_counts)
   new_signature_set <- signatureclub(signature_set)
 
-  signature_set_split <- do.call(rbind, lapply(signature_set, function(x) strsplit(as.character(x), split="")[[1]]))
+  signature_set_split <- do.call(rbind, lapply(signature_set, function(x) strsplit(as.character(x), split="")[[1]][1:(4+2*flanking_bases)]))
 
   indices1 <-  which(signature_set_split[,3]=="C" & signature_set_split[,6]=="T")
   indices2 <-  which(signature_set_split[,3]=="G" & signature_set_split[,6]=="A")

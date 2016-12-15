@@ -4,7 +4,7 @@
 \alias{aggregate_bin_counts}
 \title{Aggregate bin summary counts into a matrix of counts format}
 \usage{
-aggregate_bin_counts(dir, breaks = NULL)
+aggregate_bin_counts(dir, breaks = NULL, flanking_bases = 2)
 }
 \arguments{
 \item{dir}{The directory containing the files that are to be read and aggregated over.}

@@ -4,9 +4,9 @@
 \alias{club_signature_validation_plot}
 \title{Function to check if the signatures should be clubbed}
 \usage{
-club_signature_validation_plot(signature_counts, cex = 1, col = "red",
-  pch = 20, xlab = "C->T", ylab = "G->A", lty = 1, lwd = 1,
-  mar = c(5, 4, 4, 4), log = FALSE)
+club_signature_validation_plot(signature_counts, flanking_bases = 2,
+  cex = 1, col = "red", pch = 20, xlab = "C->T", ylab = "G->A",
+  lty = 1, lwd = 1, mar = c(5, 4, 4, 4), log = FALSE)
 }
 \arguments{
 \item{signature_counts}{The matrix of counts of all signatures as produced by \code{aggregate_bin_counts}.}

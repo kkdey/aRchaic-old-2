@@ -16,11 +16,11 @@
 #'
 
 
-club_signature_counts <- function(signature_counts){
+club_signature_counts <- function(signature_counts, flanking_bases=2){
   signature_set <- colnames(signature_counts)
   new_signature_set <- signatureclub(signature_set)
 
-  signature_set_split <- do.call(rbind, lapply(signature_set, function(x) strsplit(as.character(x), split="")[[1]]))
+  signature_set_split <- do.call(rbind, lapply(signature_set, function(x) strsplit(as.character(x), split="")[[1]][1:(4+2*flanking_bases)]))
 
   indices_G <-  which(signature_set_split[,3]=="G");
   indices_A <-  which(signature_set_split[,3]=="A");
@@ -32,7 +32,7 @@ club_signature_counts <- function(signature_counts){
 
   signature_counts_pooled <- do.call(rbind, lapply(1:dim(signature_counts)[1], function(x) tapply(signature_counts[x,], signature_set_2, sum)))
   rownames(signature_counts_pooled) <- rownames(signature_counts)
-  temp_split <- do.call(rbind, lapply(colnames(signature_counts_pooled), function(x) strsplit(as.character(x), split="")[[1]]))
+  temp_split <- do.call(rbind, lapply(colnames(signature_counts_pooled), function(x) strsplit(as.character(x), split="")[[1]][1:(4+2*flanking_bases)]))
 
   if(length(which(temp_split[,3]=="G")) !=0 || length(which(temp_split[,3]=="A"))!=0){
     stop("G->A conversion did not fully work; aborting")
