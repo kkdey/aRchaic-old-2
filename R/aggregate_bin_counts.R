@@ -19,7 +19,8 @@
 
 
 aggregate_bin_counts <- function(dir,
-                                 breaks = NULL){
+                                 breaks = NULL,
+                                 flanking_bases = 2){
 
   ancient_files <- list.files(dir);
 
@@ -51,12 +52,12 @@ aggregate_bin_counts <- function(dir,
 
   rownames(ancient_counts) <- ancient_files_filt
 
-  signature_split <- do.call(rbind, lapply(merged_signature_ancient, function(x) strsplit(as.character(x), split="")[[1]]))
+  signature_split <- do.call(rbind, lapply(merged_signature_ancient, function(x) strsplit(as.character(x), split="")[[1]][1:(4+2*flanking_bases)]))
 
   indices1 <- which(signature_split[,3]==signature_split[,6])
 
   indices2 <- numeric()
-  for(m in 1:8){
+  for(m in 1:(4+2*flanking_bases)){
     indices2 <- c(indices2, which(signature_split[,m]=="N"));
   }
 
