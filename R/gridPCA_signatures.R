@@ -51,4 +51,5 @@ gridPCA_signatures <- function(counts,
                            ncol = 2,
                            nrow = 2))
 
+  return(pr)
 }

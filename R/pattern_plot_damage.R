@@ -46,12 +46,12 @@ pattern_plot <- function(file,
   lo_right <- loess(as.numeric(tab_pattern_right)~as.numeric(names(tab_pattern_right)))
 
   if(plot_type=="left"){
-  par(mfrow=c(1,1))
-  plot(predict(lo_left), col='red', lwd=2, type="l",
-       ylab=paste0("predicted no. of damages: ", pattern),
-       xlab="read positions (from left)",
-       main=paste0("Damage plot across reads: ", pattern)
-  )}
+    par(mfrow=c(1,1))
+    plot(predict(lo_left), col='red', lwd=2, type="l",
+         ylab=paste0("predicted no. of damages: ", pattern),
+         xlab="read positions (from left)",
+         main=paste0("Damage plot across reads: ", pattern)
+    )}
 
   if(plot_type=="right"){
     par(mfrow=c(1,1))

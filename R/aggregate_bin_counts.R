@@ -27,7 +27,7 @@ aggregate_bin_counts <- function(dir,
   signature_counts_ancient <- vector(mode="list")
 
 
-  for(num in 1:length(files)){
+  for(num in 1:length(ancient_files)){
     tmp_dat <- damage_build_bin_counts(paste0(dir, ancient_files[num]),
                                        breaks=breaks,
                                        type=2)
