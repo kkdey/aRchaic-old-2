@@ -4,7 +4,8 @@
 \alias{pattern_plot}
 \title{Plot mutation signature patterns across read length}
 \usage{
-pattern_plot(file, pattern, plot_type = c("left", "right", "both"))
+pattern_plot(file, pattern, plot_type = c("left", "right", "both"),
+  use_prop = FALSE)
 }
 \arguments{
 \item{file}{a MutationFile format data obtained from applying

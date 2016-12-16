@@ -26,9 +26,13 @@
 
 pattern_plot <- function(file,
                          pattern,
-                         plot_type=c("left", "right", "both"))
+                         plot_type=c("left", "right", "both"),
+                         use_prop=0)
 {
   data <- read.csv(file, header=FALSE)
+  if(use_prop==1){
+    data[,4] <- data[,4]/sum(data[,4])
+  }
   pattern_data <- data[grep(pattern, data[,1]),]
   pattern_data[which(pattern_data[,3]==-1), 3] <- 0
 
@@ -36,6 +40,9 @@ pattern_plot <- function(file,
 
   pattern_data[which(pattern_data[,3]==-1), 3] <- 0
 
+  if(use_prop==2){
+    pattern_data[,4] <- pattern_data[,4]/sum(pattern_data[,4])
+  }
 
   tab_pattern_left <- tapply(pattern_data[,4], pattern_data[,2], sum);
 
