@@ -5,7 +5,7 @@
 \title{Plot mutation signature patterns across read length}
 \usage{
 pattern_plot(file, pattern, plot_type = c("left", "right", "both"),
-  use_prop = FALSE)
+  use_prop = 0)
 }
 \arguments{
 \item{file}{a MutationFile format data obtained from applying
@@ -17,6 +17,10 @@ read, the user wants to plot.}
 \item{plot_type}{Three options are - "left", "right" and "both" demonstrating
 whether the user wants the frequency plot of the pattern at the left end of the
 read, right end of the read or both ends.}
+
+\item{use_prop}{If equal to 0, plots the pattern of counts along the reads. If equals to 1, plots
+the proportion of the specific pattern changes against all other mutations along the reads. If equals to 2,
+plots the proportion of the specific pattern against all mutations of the same pattern along the reads.}
 }
 \value{
 Returns a frequency plot of the pattern across the read length.

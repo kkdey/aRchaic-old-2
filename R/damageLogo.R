@@ -1,13 +1,28 @@
-
-
-##########  pooled Damage signature plots  #######################
-#  this is the interface connecting damage logo plots
-#  to the theta matrix of proportions of different signnatures
-#  as would be obtained from a topic model output.
-
-# theta_mat: matrix obtained from a GoM model output
-
-#source("damagelogo.skeleton.R")
+#' @title Builds damage logo plots for the clusters
+#'
+#' @description Damage Logo plots for each cluster representing the substitution frequency of the 6 substitutional
+#' patterns (adjusting for strand bias) and the flanking bases arranged as per relative frequency on either side of
+#' the substitution.
+#'
+#' @param theta The theta matrix obtained from running the grade of membership model that stores for each cluster, the
+#' probability distribution over all the mutational signatures.
+#' @param sig_names The mutational signature names. Defaults to the rownames of the theta matrix above.
+#' @param ic.scale A binary variable indicating whether the height of the bars for substitution and flanking bases should be
+#'        adjusted by the information criterion.
+#' @param yscale_change A binary variable indicating whether the Y axis scale should be adjusted based on the size of the
+#'        logos, defaults to TRUE.
+#' @param xaxis A binary indicating whether the X axis of the logo plot should be shown
+#' @param yaxis A binary indicating whether the Y axis of the logo plot should be shown
+#' @param xaxis_fontsize The fontsize of the X axis ticks.
+#' @param xlab_fontsize The fontsize of the X axis labels.
+#' @param y_fontsize The fontsize of the Y axis ticks.
+#' @param mut_width Thw width of the bar for the mutation at the center.
+#' @param start The starting point of the stacking of logos on the Y axis. Should be close to 0, defau;ts to 0.0001.
+#' @param pop_names The title of the plot. Defaults to the cluster labels.
+#'
+#' @return Returns logo plots for each cluster
+#'
+#' @export
 
 damageLogo <- function(theta,
                        sig_names = NULL,

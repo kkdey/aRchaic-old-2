@@ -15,11 +15,18 @@
 #' whether the user wants the frequency plot of the pattern at the left end of the
 #' read, right end of the read or both ends.
 #'
+#' @param sample_name The name of the BAM file to be used in title. Defaults to NULL.
+#' @param cols The color vector of the mutational patterns plotted. The number of colors must be more than the number of
+#' mutations used.
+#' @param legend_cex The size of the legend which highlight the names of the patterns
+#'
 #' @return Returns a frequency plot of the pattern across the read length.
 #'
 #' @keywords pattern, mutation signature
 #'
 #' @importFrom stats loess
+#' @importFrom graphics abline legend  lines  par  plot
+#' @importFrom utils read.csv
 #' @export
 #'
 

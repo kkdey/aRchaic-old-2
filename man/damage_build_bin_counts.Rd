@@ -27,5 +27,5 @@ based on the distance from the ends of the read and then sumaarizing the mutatio
 format data into bins by counting the number of occurrences of reads into each
 bin.
 }
-\keyword{summrize_counts}
+\keyword{summarize_counts}
 

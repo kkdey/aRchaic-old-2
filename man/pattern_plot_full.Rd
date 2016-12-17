@@ -18,6 +18,13 @@ read, the user wants to plot.}
 \item{plot_type}{Three options are - "left", "right" and "both" demonstrating
 whether the user wants the frequency plot of the pattern at the left end of the
 read, right end of the read or both ends.}
+
+\item{sample_name}{The name of the BAM file to be used in title. Defaults to NULL.}
+
+\item{cols}{The color vector of the mutational patterns plotted. The number of colors must be more than the number of
+mutations used.}
+
+\item{legend_cex}{The size of the legend which highlight the names of the patterns}
 }
 \value{
 Returns a frequency plot of the pattern across the read length.

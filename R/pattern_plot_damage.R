@@ -15,6 +15,10 @@
 #' whether the user wants the frequency plot of the pattern at the left end of the
 #' read, right end of the read or both ends.
 #'
+#' @param use_prop If equal to 0, plots the pattern of counts along the reads. If equals to 1, plots
+#' the proportion of the specific pattern changes against all other mutations along the reads. If equals to 2,
+#' plots the proportion of the specific pattern against all mutations of the same pattern along the reads.
+#'
 #' @return Returns a frequency plot of the pattern across the read length.
 #'
 #' @keywords pattern, mutation signature
@@ -54,23 +58,30 @@ pattern_plot <- function(file,
 
   if(plot_type=="left"){
     par(mfrow=c(1,1))
-    plot(predict(lo_left), col='red', lwd=2, type="l",
+    tmp <- predict(lo_left)
+    plot(tmp, col='red', lwd=2, type="l",
          ylab=paste0("predicted no. of damages: ", pattern),
          xlab="read positions (from left)",
          main=paste0("Damage plot across reads: ", pattern)
-    )}
+    )
+    return(tmp)
+  }
 
   if(plot_type=="right"){
     par(mfrow=c(1,1))
+    tmp <- predict(lo_right)
     plot(predict(lo_right), col='red', lwd=2, type="l",
          ylab=paste0("predicted no. of damages: ", pattern),
          xlab="read positions (from right)",
          main=paste0("Damage plot across reads: ", pattern),
          xlim=rev(range(as.numeric(names(tab_pattern_right)))))
+    return(tmp)
   }
 
   if(plot_type=="both"){
     par(mfrow=c(1,2))
+    tmp1 <- predict(lo_left);
+    tmp2 <- predict(lo_right);
     plot(predict(lo_left), col='red', lwd=2, type="l",
          ylab=paste0("predicted no. of damages: ", pattern),
          xlab="read positions (from left)",
@@ -81,5 +92,7 @@ pattern_plot <- function(file,
          xlab="read positions (from right)",
          main=paste0("Damage plot across reads: ", pattern),
          xlim=rev(range(as.numeric(names(tab_pattern_right)))))
+    tmp_list <- list("left"=tmp1, "right"=tmp2)
+    return(tmp_list)
   }
 }

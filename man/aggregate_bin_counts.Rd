@@ -10,6 +10,8 @@ aggregate_bin_counts(dir, breaks = NULL, flanking_bases = 2)
 \item{dir}{The directory containing the files that are to be read and aggregated over.}
 
 \item{breaks}{The breaks used for the \code{damage.build.counts} function.}
+
+\item{flanking_bases}{The number of flanking bases. Defaults to 2.}
 }
 \value{
 Returns a matrix of aggregate counts of each signature for each file arranged along a

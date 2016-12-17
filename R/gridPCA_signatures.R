@@ -12,16 +12,19 @@
 #' @import grid
 #' @import gridExtra
 #' @import limma
+#' @import ggplot2
+#' @importFrom stats prcomp predict
+#' @importFrom graphics abline legend  lines  par  plot
 #' @export
 
 
-gridPCA_signatures <- function(counts,
+gridPCA_signatures <- function(signature_counts,
                                labs)
 {
-  if(length(labs) != dim(counts)[1]){
+  if(length(labs) != dim(signature_counts)[1]){
     stop("the length of the labels vector must equal the number of rows in the data")
   }
-  voom_signature_counts <- t(limma::voom(t(counts))$E);
+  voom_signature_counts <- t(limma::voom(t(signature_counts))$E);
   pr <- prcomp(voom_signature_counts)
 
 
@@ -29,23 +32,20 @@ gridPCA_signatures <- function(counts,
                               "labels"= labs)
 
   graphList <- vector(mode="list");
-  library(ggplot2)
 
 
-  graphList[[1]] <- qplot(PC.PC1, PC.PC2,
+  graphList[[1]] <- ggplot2::qplot(PC.PC1, PC.PC2,
                           data=pc_data_frame,
                           colour=labels)
 
-  graphList[[2]] <-qplot(PC.PC1, PC.PC3,
+  graphList[[2]] <- ggplot2::qplot(PC.PC1, PC.PC3,
                          data=pc_data_frame,
                          colour=labels)
 
-  graphList[[3]] <-qplot(PC.PC2, PC.PC3,
+  graphList[[3]] <- ggplot2::qplot(PC.PC2, PC.PC3,
                          data=pc_data_frame,
                          colour=labels)
 
-  library(grid)
-  library(gridExtra)
   a <- do.call("grid.arrange",
                args = list(grobs=graphList,
                            ncol = 2,

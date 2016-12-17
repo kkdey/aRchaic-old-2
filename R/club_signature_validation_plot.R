@@ -5,6 +5,7 @@
 #' C->T and G->A mutations for each sample.
 #'
 #' @param signature_counts The matrix of counts of all signatures as produced by \code{aggregate_bin_counts}.
+#' @param flanking_bases The number of flanking bases. Defaults to 2.
 #' @param cex The size of the dots used for plotting
 #' @param col The color of the dot
 #' @param pch The shape of the dot

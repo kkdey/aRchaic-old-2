@@ -4,7 +4,8 @@
 #' strnad bias. An example is G->A and C->T are clubbed into C->T to remove the bias
 #' due to whether 5' or 3' ends of the strands has been sequenced.
 #'
-#' @param mat The matrix of counts of all signatures as produced by \code{aggregate_bin_counts}.
+#' @param signature_counts The matrix of counts of all signatures as produced by \code{aggregate_bin_counts}.
+#' @param flanking_bases The number of flanking bases. Defaults to 2.
 #'
 #' @return Returns a matrix of clubbed signatures. The default choice of the mutation
 #' signatures are C->T, C->A, C->G, T->A, T->C and T->G. The other sets of mutations

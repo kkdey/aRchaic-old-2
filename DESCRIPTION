@@ -9,14 +9,14 @@ Authors@R: c(
     person("Matthew", "Stephens", email = "stephens999@gmail.com", role ="ctb"),
     person("John", "Novembre", email="jnovembre@uchicago edu", role="ctb"))
 Maintainer: Kushal Dey <kkdey@uchicago.edu>
-Description: Performs visualization, clustering and comparative exploratory analysis of ancient and modern BAM files
+Description: Performs visualization, clustering and comparative exploratory analysis of ancient and modern BAM files.
 Depends:
     R (>= 3.2)
 License: GPL (>= 2)
 URL: https://github.com/kkdey/aRchaic
 LazyData: true
 Encoding: UTF-8
-Imports: ggplot2, grid, gridExtra, limma
+Imports: ggplot2, grid, gridExtra, limma, plyr
 Suggests:
     knitr, BiocStyle, Biobase, roxygen2, RColorBrewer, devtools, xtable
 VignetteBuilder: knitr

@@ -11,6 +11,8 @@ club_signature_validation_plot(signature_counts, flanking_bases = 2,
 \arguments{
 \item{signature_counts}{The matrix of counts of all signatures as produced by \code{aggregate_bin_counts}.}
 
+\item{flanking_bases}{The number of flanking bases. Defaults to 2.}
+
 \item{cex}{The size of the dots used for plotting}
 
 \item{col}{The color of the dot}

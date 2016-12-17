@@ -4,12 +4,12 @@
 \alias{gridPCA_signatures}
 \title{Function to perform grid plots of PCA for signature counts}
 \usage{
-gridPCA_signatures(counts, labs)
+gridPCA_signatures(signature_counts, labs)
 }
 \arguments{
-\item{labs}{The factor labels for the samples used for coloring in the PC plot}
-
 \item{signature_counts}{The matrix of the signature counts}
+
+\item{labs}{The factor labels for the samples used for coloring in the PC plot}
 }
 \value{
 Returns grid plot of the PCA plots

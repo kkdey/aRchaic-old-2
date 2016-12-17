@@ -7,7 +7,9 @@
 club_signature_counts(signature_counts, flanking_bases = 2)
 }
 \arguments{
-\item{mat}{The matrix of counts of all signatures as produced by \code{aggregate_bin_counts}.}
+\item{signature_counts}{The matrix of counts of all signatures as produced by \code{aggregate_bin_counts}.}
+
+\item{flanking_bases}{The number of flanking bases. Defaults to 2.}
 }
 \value{
 Returns a matrix of clubbed signatures. The default choice of the mutation

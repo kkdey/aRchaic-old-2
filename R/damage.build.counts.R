@@ -18,7 +18,9 @@
 #' in which the signature belongs to and a column representing the counts of the
 #' occurrences of that signature in that bin  across the entire BAM file.
 #'
-#' @keywords summrize_counts
+#' @keywords summarize_counts
+#' @importFrom utils read.csv
+#' @importFrom plyr summarise ddply
 #'
 #' @export
 
@@ -46,8 +48,7 @@ damage_build_bin_counts =  function(file,
   modified_file <- cbind.data.frame(file[,1], file[,4], bin_values)
   colnames(modified_file) <- c("pattern", "counts", "bin_values")
 
-  library(plyr)
-  df1 <- ddply(modified_file, .(pattern, bin_values), summarise, newvar = sum(counts))
+  df1 <- plyr::ddply(modified_file, .(pattern, bin_values), plyr::summarise, newvar = sum(counts))
   colnames(df1) <- c("pattern", "bin", "counts")
 
   if(type==2){

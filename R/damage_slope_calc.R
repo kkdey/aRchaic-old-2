@@ -1,6 +1,24 @@
-
-
-#############   Damage slope calculator  ################################
+#' @title Calculates slope of the damage/mutational pattern from ends of reads
+#'
+#' @description Calculates the slope of the damage patterns from ends of the reads for any mutational signature.
+#'
+#' @param file a MutationFile format data obtained from applying
+#' \code{generate_summary_data} on the BAM files.
+#'
+#' @param breaks The breaks along the read length used to form the bins. The default os
+#' is NULL in which case, we choose the default option of having evenly separated
+#' bins defined at spacings of 5 along the read length.
+#'
+#' @param type two options - slope or relative ratio. If equal to slope (which is also the default),
+#' calculates the slope of the line connecting each position on the read with respect to the previous
+#' position on the read. If it is relative ratio, calculates relative ratio of damages at each position
+#' on the read with respect to the last position.
+#'
+#' @return Returns a matrix of slope or relative ratio values at each position from the start and end of the reads
+#'
+#' @keywords summrize_counts
+#'
+#' @export
 
 damage_slope_calc <-  function(file, breaks = c(1, 3, 5, 7, 10, 15), type="slope"){
   levels <- c("C->T", "C->G", "C->A", "T->G", "T->A", "T->C",

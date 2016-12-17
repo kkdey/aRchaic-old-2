@@ -7,6 +7,7 @@
 #'
 #' @param dir The directory containing the files that are to be read and aggregated over.
 #' @param breaks The breaks used for the \code{damage.build.counts} function.
+#' @param flanking_bases The number of flanking bases. Defaults to 2.
 #'
 #' @return Returns a matrix of aggregate counts of each signature for each file arranged along a
 #' row of the matrix. The number of rows correspond to the number of files in the directory
