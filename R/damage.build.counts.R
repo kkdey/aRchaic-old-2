@@ -48,7 +48,7 @@ damage_build_bin_counts =  function(file,
   modified_file <- cbind.data.frame(file[,1], file[,4], bin_values)
   colnames(modified_file) <- c("pattern", "counts", "bin_values")
 
-  df1 <- plyr::ddply(modified_file, .(pattern, bin_values), plyr::summarise, newvar = sum(counts))
+  df1 <- plyr::ddply(modified_file, .(pattern, bin_values), summarise, newvar = sum(counts))
   colnames(df1) <- c("pattern", "bin", "counts")
 
   if(type==2){
