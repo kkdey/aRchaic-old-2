@@ -4,12 +4,20 @@
 \alias{gridPCA_signatures}
 \title{Function to perform grid plots of PCA for signature counts}
 \usage{
-gridPCA_signatures(signature_counts, labs)
+gridPCA_signatures(signature_counts, labs, normalize = TRUE, cols = c("red",
+  "blue", "darkgoldenrod1", "cyan", "firebrick", "green", "brown4", "burlywood",
+  "yellow", "darkgray", "deepskyblue", "darkkhaki", "hotpink", "darkorchid",
+  "magenta", "yellow", "azure1", "azure4"))
 }
 \arguments{
 \item{signature_counts}{The matrix of the signature counts}
 
 \item{labs}{The factor labels for the samples used for coloring in the PC plot}
+
+\item{normalize}{If TRUE, we normalize by the total number of mutations in that sample (analogous to library
+size normalization in RNA-seq)}
+
+\item{cols}{The palette used for labeling different data sources in the PCA plot.}
 }
 \value{
 Returns grid plot of the PCA plots
