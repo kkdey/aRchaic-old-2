@@ -31,6 +31,9 @@
 #' @param lineport_height the width of the plot window for the mutational profile line plot.
 #' @return Returns logo plots for each cluster
 #'
+#' @import grid
+#' @import gridBase
+#'
 #' @export
 
 damageLogo_pos <- function(theta,
@@ -995,7 +998,7 @@ plot_graph <- function(probs, max_pos, col="red",
        cex.main=cex.main)
   axis(side = 1, at = round(seq(0, max_pos, length.out=4),1), cex.axis = cex.axis, lwd.ticks = 2)
   ylimit <- c(0.0, 0.5, 1.0)*max(probs)
-  axis(side = 2, at = c(0.0, 0.5, 1.0), labels = round(ylimit,1), cex.axis = cex.axis, lwd.ticks=2)
+  axis(side = 2, at = c(0.0, 0.5, 1.0), labels = round(ylimit,2), cex.axis = cex.axis, lwd.ticks=2)
 }
 
 
