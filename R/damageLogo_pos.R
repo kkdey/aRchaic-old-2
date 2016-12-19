@@ -62,7 +62,10 @@ damageLogo_pos <- function(theta,
     sig_names <- rownames(theta)
 
   prob_mutation <- filter_signatures_only_location(t(theta), max_pos = max_pos, flanking_bases = flanking_bases)
-  prob_mutation <- t(apply(prob_mutation, 1, function(x) return(x/sum(x))))
+  prob_mutation <- t(apply(prob_mutation, 1, function(x) {
+                                                            y <- x[!is.na(x)];
+                                                            return(y/sum(y))
+                                                            }))
 
   sig_split <- do.call(rbind,
                        lapply(sig_names,
@@ -990,10 +993,10 @@ plot_graph <- function(probs, max_pos, col="red",
                        main="",
                        cex.axis=unit(0.75, "npc"),
                        cex.main=unit(1, "npc")){
-  if (length(probs) != max_pos){
-    stop(cat('probability vector must be of length ', max_pos))
-  }
-  plot(1:max_pos, probs/max(probs), xlim = c(0, max_pos), ylim=c(0,1), xlab = xlab, ylab = ylab,
+  # if (length(probs) != max_pos){
+  #   stop(cat('probability vector must be of length ', max_pos))
+  # }
+  plot(as.numeric(names(probs)), probs/max(probs), xlim = c(0, max_pos), ylim=c(0,1), xlab = xlab, ylab = ylab,
        type = "b", xaxt = "n", yaxt = "n", cex = cex, pch=pch, col=col, main=main,
        cex.main=cex.main)
   axis(side = 1, at = round(seq(0, max_pos, length.out=4),1), cex.axis = cex.axis, lwd.ticks = 2)
