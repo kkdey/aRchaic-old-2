@@ -6,6 +6,7 @@
 #' @param counts The matrix of the signature counts obtained by \code{aggregate_bin_counts} or
 #'  \code{club_signature_counts} functions.
 #' @param pattern The substitution pattern for which the user intends to extract the counts.
+#' @param flanking_bases The number of flanking bases for the mutation signatures.
 #' @param use_prop If TRUE, we record the proportion of the signatures with that pattern
 #' compared to signatures with all patterns for each sample. Defaults to FALSE.
 #'
@@ -14,9 +15,9 @@
 #' @export
 #'
 
-filter_signatures_per_substitution <- function(counts, pattern, use_prop=FALSE){
+filter_signatures_per_substitution <- function(counts, pattern, flanking_bases=2, use_prop=FALSE){
    mutation_sigs <- colnames(counts)
-   sub_pattern <- sapply(mutation_sigs, function(x) paste(strsplit(as.character(x), "")[[1]][3:6], collapse=""))
+   sub_pattern <- sapply(mutation_sigs, function(x) paste(strsplit(as.character(x), "")[[1]][(flanking_bases+1):(flanking_bases+4)], collapse=""))
    indices <- which(!is.na(match(sub_pattern, pattern)))
    if(use_prop){
      prop <- t(apply(counts, 1, function(x) return(x/sum(x))))

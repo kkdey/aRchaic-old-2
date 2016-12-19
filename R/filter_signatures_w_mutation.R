@@ -6,6 +6,7 @@
 #'
 #' @param counts The matrix of the signature counts obtained by \code{aggregate_bin_counts} or
 #'  \code{club_signature_counts} functions.
+#' @param flanking_bases The number of flanking bases for the mutation signatures
 #'
 #' @return Returns a filtered matrix with same number of rows (samples) but reduced set of columns that only contains
 #' the counts for each mutation without the flanking bases and location information.
@@ -13,10 +14,10 @@
 #' @export
 #'
 
-filter_signatures_w_mutation <- function(counts){
+filter_signatures_w_mutation <- function(counts, flanking_bases=2){
   names <- colnames(counts);
 
-  names_mod <- as.vector(sapply(names, function(x) paste(strsplit(x, "")[[1]][3:6], collapse="")))
+  names_mod <- as.vector(sapply(names, function(x) paste(strsplit(x, "")[[1]][(flanking_bases+1):(flanking_bases+4)], collapse="")))
   counts_w_mutation <- numeric();
   for(num in 1:dim(counts)[1]){
     counts_w_mutation <- rbind(counts_w_mutation,

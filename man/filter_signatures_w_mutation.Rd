@@ -4,11 +4,13 @@
 \alias{filter_signatures_w_mutation}
 \title{Function to extract counts for only mutation with no flanking bases.}
 \usage{
-filter_signatures_w_mutation(counts)
+filter_signatures_w_mutation(counts, flanking_bases = 2)
 }
 \arguments{
 \item{counts}{The matrix of the signature counts obtained by \code{aggregate_bin_counts} or
 \code{club_signature_counts} functions.}
+
+\item{flanking_bases}{The number of flanking bases for the mutation signatures}
 }
 \value{
 Returns a filtered matrix with same number of rows (samples) but reduced set of columns that only contains

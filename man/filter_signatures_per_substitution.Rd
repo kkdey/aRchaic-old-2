@@ -4,13 +4,16 @@
 \alias{filter_signatures_per_substitution}
 \title{Function to extract signature counts only for a specific substitution pattern}
 \usage{
-filter_signatures_per_substitution(counts, pattern, use_prop = FALSE)
+filter_signatures_per_substitution(counts, pattern, flanking_bases = 2,
+  use_prop = FALSE)
 }
 \arguments{
 \item{counts}{The matrix of the signature counts obtained by \code{aggregate_bin_counts} or
 \code{club_signature_counts} functions.}
 
 \item{pattern}{The substitution pattern for which the user intends to extract the counts.}
+
+\item{flanking_bases}{The number of flanking bases for the mutation signatures.}
 
 \item{use_prop}{If TRUE, we record the proportion of the signatures with that pattern
 compared to signatures with all patterns for each sample. Defaults to FALSE.}
