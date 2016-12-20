@@ -6,6 +6,9 @@
 #'
 #' @param signature_counts The matrix of the signature counts
 #' @param labs The factor labels for the samples used for coloring in the PC plot
+#' @param normalize If TRUE, we normalize by the total number of mutations in that sample (analogous to library
+#' size normalization in RNA-seq)
+#' @param cols The palette used for labeling different data sources in the PCA plot.
 #'
 #' @return Returns grid plot of the PCA plots
 #' @keywords PCA_signatures
@@ -19,14 +22,23 @@
 
 
 gridPCA_signatures <- function(signature_counts,
-                               labs)
+                               labs,
+                               normalize=TRUE,
+                               cols = c("red","blue","darkgoldenrod1","cyan","firebrick", "green",
+                                        "brown4","burlywood","yellow","darkgray","deepskyblue","darkkhaki",
+                                        "hotpink","darkorchid","magenta","yellow", "azure1","azure4"))
 {
   if(length(labs) != dim(signature_counts)[1]){
     stop("the length of the labels vector must equal the number of rows in the data")
   }
-  voom_signature_counts <- t(limma::voom(t(signature_counts))$E);
-  pr <- prcomp(voom_signature_counts)
+  if(normalize){
+      voom_signature_counts <- t(limma::voom(t(signature_counts))$E);
+      pr <- prcomp(voom_signature_counts)
+  }
 
+  else{
+      pr <- prcomp(signature_counts)
+  }
 
   pc_data_frame <- data.frame("PC"=pr$x,
                               "labels"= labs)
@@ -36,15 +48,15 @@ gridPCA_signatures <- function(signature_counts,
 
   graphList[[1]] <- ggplot2::qplot(PC.PC1, PC.PC2,
                           data=pc_data_frame,
-                          colour=labels)
+                          colour=factor(labels))  + scale_colour_manual(values = cols)
 
   graphList[[2]] <- ggplot2::qplot(PC.PC1, PC.PC3,
                          data=pc_data_frame,
-                         colour=labels)
+                         colour=factor(labels)) + scale_colour_manual(values = cols)
 
   graphList[[3]] <- ggplot2::qplot(PC.PC2, PC.PC3,
                          data=pc_data_frame,
-                         colour=labels)
+                         colour=factor(labels)) + scale_colour_manual(values = cols)
 
   a <- do.call("grid.arrange",
                args = list(grobs=graphList,
