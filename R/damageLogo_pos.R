@@ -50,14 +50,14 @@ damageLogo_pos <- function(theta,
                        mut_width=2,
                        start=0.0001,
                        pop_names=paste0("Cluster ",1:dim(theta)[2]),
-                       logoport_x = 0.4,
+                       logoport_x = 0.35,
                        logoport_y= 0.5,
-                       logoport_width= 0.4,
+                       logoport_width= 0.35,
                        logoport_height= 0.5,
                        lineport_x = 0.95,
-                       lineport_y=0.85,
+                       lineport_y=0.75,
                        lineport_width=0.25,
-                       lineport_height=0.3){
+                       lineport_height=0.45){
   if(is.null(sig_names))
     sig_names <- rownames(theta)
 
@@ -66,6 +66,7 @@ damageLogo_pos <- function(theta,
                                                             y <- x[!is.na(x)];
                                                             return(y/sum(y))
                                                             }))
+  max_prob <- max(prob_mutation);
 
   sig_split <- do.call(rbind,
                        lapply(sig_names,
@@ -106,6 +107,7 @@ damageLogo_pos <- function(theta,
                            probs = prob_mutation[l,],
                            ic = ic[,l],
                            max_pos = max_pos,
+                           max_prob = max_prob,
                            ic.scale = ic.scale,
                            yscale_change = yscale_change,
                            xaxis=xaxis,
@@ -827,6 +829,7 @@ damageLogo.pos.skeleton <- function(pwm,
                                 probs,
                                 ic,
                                 max_pos,
+                                max_prob,
                                 ic.scale=TRUE,
                                 xaxis=TRUE,
                                 yaxis=TRUE,
@@ -948,11 +951,11 @@ damageLogo.pos.skeleton <- function(pwm,
   }
 
   if(is.null(pop_name)){
-    grid.text("Damage logo plot", y = unit(1, "npc") + unit(1.5, "lines"),
+    grid.text("Logo plot", y = unit(1, "npc") + unit(1.5, "lines"),
               gp = gpar(fontsize = 16))
   }else{
-    grid.text(paste0("Logo plot for ", pop_name), y = unit(1, "npc") + unit(1.5, "lines"),
-              gp = gpar(fontsize = 16))
+    grid.text(paste0(pop_name), x = unit(1, "npc"), y = unit(1, "npc") + unit(2, "lines"),
+              gp = gpar(fontsize = 20, col="black"))
   }
 
   if (xaxis){
@@ -981,13 +984,13 @@ damageLogo.pos.skeleton <- function(pwm,
   vp2 <- viewport(x=lineport_x,y=lineport_y,width=lineport_width, height=lineport_height, just=c("right","top"))
   pushViewport(vp2)
   par(plt = gridPLT(), new=TRUE)
-  plot_graph(probs, max_pos)
+  plot_graph(probs, max_pos=max_pos, max_prob=max_prob)
   popViewport(0)
   par(ask=FALSE)
 }
 
 
-plot_graph <- function(probs, max_pos, col="red",
+plot_graph <- function(probs, max_pos, max_prob, col="red",
                        cex=unit(1, "npc"), pch=unit(16,"npc"),
                        xlab="read position", ylab="mutation probability",
                        main="",
@@ -996,11 +999,11 @@ plot_graph <- function(probs, max_pos, col="red",
   # if (length(probs) != max_pos){
   #   stop(cat('probability vector must be of length ', max_pos))
   # }
-  plot(as.numeric(names(probs)), probs/max(probs), xlim = c(0, max_pos), ylim=c(0,1), xlab = xlab, ylab = ylab,
+  plot(as.numeric(names(probs)), probs/max_prob, xlim = c(0, max_pos), ylim=c(0,1), xlab = xlab, ylab = ylab,
        type = "b", xaxt = "n", yaxt = "n", cex = cex, pch=pch, col=col, main=main,
        cex.main=cex.main)
-  axis(side = 1, at = round(seq(0, max_pos, length.out=4),1), cex.axis = cex.axis, lwd.ticks = 2)
-  ylimit <- c(0.0, 0.5, 1.0)*max(probs)
+  axis(side = 1, at = floor(seq(1, max_pos, length.out=5)), cex.axis = cex.axis, lwd.ticks = 2)
+  ylimit <- c(0.0, 0.5, 1.0)*max_prob
   axis(side = 2, at = c(0.0, 0.5, 1.0), labels = round(ylimit,2), cex.axis = cex.axis, lwd.ticks=2)
 }
 

@@ -8,9 +8,9 @@ damageLogo_pos(theta, sig_names = NULL, ic.scale = TRUE, max_pos = 15,
   flanking_bases = 2, yscale_change = TRUE, xaxis = TRUE, yaxis = TRUE,
   xaxis_fontsize = 10, xlab_fontsize = 15, y_fontsize = 15,
   mut_width = 2, start = 1e-04, pop_names = paste0("Cluster ",
-  1:dim(theta)[2]), logoport_x = 0.4, logoport_y = 0.5,
-  logoport_width = 0.4, logoport_height = 0.5, lineport_x = 0.95,
-  lineport_y = 0.85, lineport_width = 0.25, lineport_height = 0.3)
+  1:dim(theta)[2]), logoport_x = 0.35, logoport_y = 0.5,
+  logoport_width = 0.35, logoport_height = 0.5, lineport_x = 0.95,
+  lineport_y = 0.75, lineport_width = 0.25, lineport_height = 0.45)
 }
 \arguments{
 \item{theta}{The theta matrix obtained from running the grade of membership model that stores for each cluster, the

@@ -19,7 +19,6 @@
 
 club_signature_counts <- function(signature_counts, flanking_bases=2){
   signature_set <- colnames(signature_counts)
-  new_signature_set <- signatureclub(signature_set)
 
   signature_set_split <- do.call(rbind, lapply(signature_set, function(x) strsplit(as.character(x), split="")[[1]][1:(4+2*flanking_bases)]))
 
@@ -31,7 +30,21 @@ club_signature_counts <- function(signature_counts, flanking_bases=2){
   signature_set_2 <- signature_set
   signature_set_2[indices] <- signatureclub(signature_set[indices])
 
-  signature_counts_pooled <- do.call(rbind, lapply(1:dim(signature_counts)[1], function(x) tapply(signature_counts[x,], signature_set_2, sum)))
+  signature_set_3 <- signature_set_2
+
+  signature_set_3[indices] <- sapply(signature_set_2[indices], function(x) {
+                                                bases <- strsplit(as.character(x), split="")[[1]]
+                                                left_bases <- bases[1:(flanking_bases)]
+                                                right_bases <- bases[(flanking_bases+4+1):(4+2*flanking_bases)]
+                                                other_bases <- bases[(4+2*flanking_bases+1):nchar(x)]
+                                                newsig <- paste0(c(rev(right_bases), bases[(flanking_bases+1):(flanking_bases+4)], rev(left_bases), other_bases), collapse="")
+                                                return(newsig)
+                                           })
+
+
+
+
+  signature_counts_pooled <- do.call(rbind, lapply(1:dim(signature_counts)[1], function(x) tapply(signature_counts[x,], signature_set_3, sum)))
   rownames(signature_counts_pooled) <- rownames(signature_counts)
   temp_split <- do.call(rbind, lapply(colnames(signature_counts_pooled), function(x) strsplit(as.character(x), split="")[[1]][1:(4+2*flanking_bases)]))
 
