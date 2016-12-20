@@ -16,8 +16,8 @@ strand_breaks_composition <- function(file, flanking_bases=2){
   data <- read.csv(file)
   tab <- as.numeric()
   for(m in 1:flanking_bases){
-    tmp_indices <- which(ancient_data[,2] <=(min(ancient_data[,2])+(m-1)))
-    tmp_data <- ancient_data[tmp_indices,]
+    tmp_indices <- which(data[,2] <=(min(data[,2])+(m-1)))
+    tmp_data <- data[tmp_indices,]
     sig <- sapply(as.character(tmp_data[,1]), function(x) strsplit(x,"")[[1]][(flanking_bases -m +1)])
     sig <- sig[sig != "N"]
     tab <- rbind(tab, table(sig))
@@ -27,8 +27,8 @@ strand_breaks_composition <- function(file, flanking_bases=2){
 
   tab <- as.numeric()
   for(m in 1:flanking_bases){
-    tmp_indices <- which(ancient_data[,3] <=(min(ancient_data[,3])+(m-1)))
-    tmp_data <- ancient_data[tmp_indices,]
+    tmp_indices <- which(data[,3] <=(min(data[,3])+(m-1)))
+    tmp_data <- data[tmp_indices,]
     sig <- sapply(as.character(tmp_data[,1]), function(x) strsplit(x,"")[[1]][(flanking_bases + 5 + m -1)])
     sig <- sig[sig != "N"]
     tab <- rbind(tab, table(sig))
