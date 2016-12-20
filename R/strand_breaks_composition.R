@@ -19,7 +19,7 @@ strand_breaks_composition <- function(file, flanking_bases=2){
     tmp_indices <- which(data[,2] <=(min(data[,2])+(m-1)))
     tmp_data <- data[tmp_indices,]
     sig <- sapply(as.character(tmp_data[,1]), function(x) strsplit(x,"")[[1]][(flanking_bases -m +1)])
-    sig <- sig[sig != "N"]
+    sig <- sig[!is.na(match(sig, c("A", "C", "G", "T")))]
     tab <- rbind(tab, table(sig))
   }
 
@@ -30,7 +30,7 @@ strand_breaks_composition <- function(file, flanking_bases=2){
     tmp_indices <- which(data[,3] <=(min(data[,3])+(m-1)))
     tmp_data <- data[tmp_indices,]
     sig <- sapply(as.character(tmp_data[,1]), function(x) strsplit(x,"")[[1]][(flanking_bases + 5 + m -1)])
-    sig <- sig[sig != "N"]
+    sig <- sig[!is.na(match(sig, c("A", "C", "G", "T")))]
     tab <- rbind(tab, table(sig))
   }
 
