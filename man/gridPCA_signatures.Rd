@@ -5,9 +5,9 @@
 \title{Function to perform grid plots of PCA for signature counts}
 \usage{
 gridPCA_signatures(signature_counts, labs, normalize = TRUE, cols = c("red",
-  "blue", "darkgoldenrod1", "cyan", "firebrick", "green", "brown4", "burlywood",
-  "yellow", "darkgray", "deepskyblue", "darkkhaki", "hotpink", "darkorchid",
-  "magenta", "yellow", "azure1", "azure4"))
+  "blue", "darkgoldenrod1", "cyan", "firebrick", "green", "hotpink",
+  "burlywood", "darkkhaki", "yellow", "darkgray", "deepskyblue", "brown4",
+  "darkorchid", "magenta", "azure1", "azure4"))
 }
 \arguments{
 \item{signature_counts}{The matrix of the signature counts}

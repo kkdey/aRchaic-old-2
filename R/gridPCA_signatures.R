@@ -25,8 +25,8 @@ gridPCA_signatures <- function(signature_counts,
                                labs,
                                normalize=TRUE,
                                cols = c("red","blue","darkgoldenrod1","cyan","firebrick", "green",
-                                        "brown4","burlywood","yellow","darkgray","deepskyblue","darkkhaki",
-                                        "hotpink","darkorchid","magenta","yellow", "azure1","azure4"))
+                                        "hotpink","burlywood","darkkhaki","yellow","darkgray","deepskyblue",
+                                        "brown4","darkorchid","magenta", "azure1","azure4"))
 {
   if(length(labs) != dim(signature_counts)[1]){
     stop("the length of the labels vector must equal the number of rows in the data")

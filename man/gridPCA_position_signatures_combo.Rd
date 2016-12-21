@@ -6,8 +6,8 @@
 \usage{
 gridPCA_position_signatures_combo(signature_list, labs, source_names = NULL,
   input_pos = 1:20, normalize = TRUE, cols = c("red", "blue",
-  "darkgoldenrod1", "cyan", "firebrick", "green", "brown4", "burlywood",
-  "yellow", "darkgray", "deepskyblue", "darkkhaki", "hotpink", "darkorchid",
+  "darkgoldenrod1", "cyan", "firebrick", "green", "hotpink", "burlywood",
+  "yellow", "darkgray", "deepskyblue", "darkkhaki", "brown4", "darkorchid",
   "magenta", "yellow", "azure1", "azure4"))
 }
 \arguments{

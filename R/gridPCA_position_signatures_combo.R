@@ -31,8 +31,8 @@ gridPCA_position_signatures_combo <- function(signature_list,
                                input_pos = 1:20,
                                normalize=TRUE,
                                cols = c("red","blue","darkgoldenrod1","cyan","firebrick", "green",
-                                        "brown4","burlywood","yellow","darkgray","deepskyblue","darkkhaki",
-                                        "hotpink","darkorchid","magenta","yellow", "azure1","azure4"))
+                                        "hotpink","burlywood","yellow","darkgray","deepskyblue","darkkhaki",
+                                        "brown4","darkorchid","magenta","yellow", "azure1","azure4"))
 {
   if(!is.null(source_names)){
     if(length(source_names) != length(signature_list)){

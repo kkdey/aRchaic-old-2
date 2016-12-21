@@ -13,14 +13,14 @@
 
 
 strand_breaks_composition <- function(file, flanking_bases=2){
-  data <- read.csv(file)
+  data <- read.csv(file, header=FALSE)
   tab <- as.numeric()
   for(m in 1:flanking_bases){
     tmp_indices <- which(data[,2] <=(min(data[,2])+(m-1)))
     tmp_data <- data[tmp_indices,]
     sig <- sapply(as.character(tmp_data[,1]), function(x) strsplit(x,"")[[1]][(flanking_bases -m +1)])
     sig <- sig[!is.na(match(sig, c("A", "C", "G", "T")))]
-    tab <- rbind(tab, table(sig))
+    tab <- rbind(tab, table(factor(sig, levels=c("A", "C", "G", "T"))))
   }
 
   sum_tab_left <- colSums(tab)
@@ -31,7 +31,7 @@ strand_breaks_composition <- function(file, flanking_bases=2){
     tmp_data <- data[tmp_indices,]
     sig <- sapply(as.character(tmp_data[,1]), function(x) strsplit(x,"")[[1]][(flanking_bases + 5 + m -1)])
     sig <- sig[!is.na(match(sig, c("A", "C", "G", "T")))]
-    tab <- rbind(tab, table(sig))
+    tab <- rbind(tab, table(factor(sig, levels=c("A", "C", "G", "T"))))
   }
 
   sum_tab_right <- colSums(tab)
