@@ -20,6 +20,7 @@
 #' @param y_fontsize The fontsize of the Y axis ticks.
 #' @param mut_width Thw width of the bar for the mutation at the center.
 #' @param start The starting point of the stacking of logos on the Y axis. Should be close to 0, defau;ts to 0.0001.
+#' @param  renyi_alpha The entropy scale for the Renyi entropy on the flanking bases and mutations.
 #' @param pop_names The title of the plot. Defaults to the cluster labels.
 #' @param logoport_x the X-axis position of the plot window for the logo plot
 #' @param logoport_y the Y-axis position of the plot window for the logo plot
@@ -39,7 +40,7 @@
 damageLogo_pos <- function(theta,
                        sig_names = NULL,
                        ic.scale=TRUE,
-                       max_pos = 15,
+                       max_pos = 20,
                        flanking_bases=2,
                        yscale_change = TRUE,
                        xaxis=TRUE,
@@ -49,6 +50,7 @@ damageLogo_pos <- function(theta,
                        y_fontsize=15,
                        mut_width=2,
                        start=0.0001,
+                       renyi_alpha = 1,
                        pop_names=paste0("Cluster ",1:dim(theta)[2]),
                        logoport_x = 0.35,
                        logoport_y= 0.5,
@@ -99,7 +101,7 @@ damageLogo_pos <- function(theta,
     }
   }
 
-  ic <- damage.ic(prop_patterns_list)
+  ic <- damage.ic(prop_patterns_list, alpha=renyi_alpha)
 
   grob_list <- list()
   for(l in 1:length(prop_patterns_list)){
@@ -134,15 +136,38 @@ pwm2ic<-function(pwm) {
   npos<-ncol(pwm)
   ic<-numeric(length=npos)
   for (i in 1:npos) {
-    ic[i]<- log(nrow(pwm), base=2) + sum(sapply(pwm[, i], function(x) {
+    ic[i]<- log(length(which(pwm[,i]!=0.00)), base=2) + sum(sapply(pwm[, i], function(x) {
       if (x > 0) { x*log2(x) } else { 0 }
     }))
   }
   ic
 }
 
+ic_computer <-function(mat, alpha) {
+  mat <- apply(mat, 2, function(x) return(x/sum(x)))
+  npos<-ncol(mat)
+  ic <-numeric(length=npos)
+  for (i in 1:npos) {
+    if(alpha == 1){
+      ic[i] <- log(length(which(mat[,i]!=0.00)), base=2) + sum(sapply(mat[, i], function(x) {
+        if (x > 0) { x*log2(x) } else { 0 }
+      }))
+    }
+    else if(alpha == Inf){
+      ic[i] <- log(length(which(mat[,i]!=0.00)), base=2) + log(max(mat[,i]))
+    }
+    else if(alpha <= 0){
+      stop("alpha value must be greater than 0")
+    }
+    else{
+      ic[i] <- log(length(which(mat[,i]!=0.00)), base=2) - (1/(1-alpha))* log (sum(mat[,i]^{alpha}), base=2)
+    }
+  }
+  return(ic)
+}
 
-damage.ic<-function(pwm) {
+
+damage.ic<-function(pwm, alpha=1) {
   npos<-ncol(pwm[[1]])
   ic<- matrix(0, npos, length(pwm))
 
@@ -152,7 +177,7 @@ damage.ic<-function(pwm) {
       mat <- cbind(mat, pwm[[j]][,i])
     }
     mat_clean <- mat[rowSums(mat) != 0,]
-    ic[i,] <- pwm2ic(mat_clean)
+    ic[i,] <- ic_computer(mat_clean, alpha)
   }
 
   return(ic)
@@ -869,7 +894,9 @@ damageLogo.pos.skeleton <- function(pwm,
   if (ic.scale){
     if(yscale_change){
       if(max(ic)<1){ylim <- 1
-      facs <- ic + 1 - max(ic)}
+      #facs <- ic + 1 - max(ic)
+      facs <- ic/max(ic)
+      }
       if(max(ic)>1){ylim <- 2
       facs <- ic}
     }else{
@@ -971,7 +998,7 @@ damageLogo.pos.skeleton <- function(pwm,
   if (yaxis){
     if(yscale_change==TRUE){
       grid.yaxis(at = ylim_scale,
-                 label = round(ic_lim_scale,1),
+                 label = round(ic_lim_scale,2),
                  gp=gpar(fontsize=y_fontsize))
     }else{
       grid.yaxis(gp=gpar(fontsize=y_fontsize))
