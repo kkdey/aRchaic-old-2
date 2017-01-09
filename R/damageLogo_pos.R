@@ -104,7 +104,6 @@ damageLogo_pos <- function(theta,
   ic <- damage.ic(prop_patterns_list, alpha=renyi_alpha)
 
   grob_list <- list()
-  plot.new()
   for(l in 1:length(prop_patterns_list)){
   damageLogo.pos.skeleton(pwm = prop_patterns_list[[l]],
                            probs = prob_mutation[l,],
