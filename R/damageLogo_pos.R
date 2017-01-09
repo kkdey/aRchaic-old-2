@@ -20,7 +20,7 @@
 #' @param y_fontsize The fontsize of the Y axis ticks.
 #' @param mut_width Thw width of the bar for the mutation at the center.
 #' @param start The starting point of the stacking of logos on the Y axis. Should be close to 0, defau;ts to 0.0001.
-#' @param  renyi_alpha The entropy scale for the Renyi entropy on the flanking bases and mutations.
+#' @param renyi_alpha The entropy scale for the Renyi entropy on the flanking bases and mutations.
 #' @param pop_names The title of the plot. Defaults to the cluster labels.
 #' @param logoport_x the X-axis position of the plot window for the logo plot
 #' @param logoport_y the Y-axis position of the plot window for the logo plot

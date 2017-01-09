@@ -4,13 +4,14 @@
 \alias{damageLogo_pos}
 \title{Builds damage logo plots along with mutational profile across read for the clusters}
 \usage{
-damageLogo_pos(theta, sig_names = NULL, ic.scale = TRUE, max_pos = 15,
+damageLogo_pos(theta, sig_names = NULL, ic.scale = TRUE, max_pos = 20,
   flanking_bases = 2, yscale_change = TRUE, xaxis = TRUE, yaxis = TRUE,
   xaxis_fontsize = 10, xlab_fontsize = 15, y_fontsize = 15,
-  mut_width = 2, start = 1e-04, pop_names = paste0("Cluster ",
-  1:dim(theta)[2]), logoport_x = 0.35, logoport_y = 0.5,
-  logoport_width = 0.35, logoport_height = 0.5, lineport_x = 0.95,
-  lineport_y = 0.75, lineport_width = 0.25, lineport_height = 0.45)
+  mut_width = 2, start = 1e-04, renyi_alpha = 1,
+  pop_names = paste0("Cluster ", 1:dim(theta)[2]), logoport_x = 0.35,
+  logoport_y = 0.5, logoport_width = 0.35, logoport_height = 0.5,
+  lineport_x = 0.95, lineport_y = 0.75, lineport_width = 0.25,
+  lineport_height = 0.45)
 }
 \arguments{
 \item{theta}{The theta matrix obtained from running the grade of membership model that stores for each cluster, the
@@ -41,6 +42,8 @@ logos, defaults to TRUE.}
 \item{mut_width}{Thw width of the bar for the mutation at the center.}
 
 \item{start}{The starting point of the stacking of logos on the Y axis. Should be close to 0, defau;ts to 0.0001.}
+
+\item{renyi_alpha}{The entropy scale for the Renyi entropy on the flanking bases and mutations.}
 
 \item{pop_names}{The title of the plot. Defaults to the cluster labels.}
 
