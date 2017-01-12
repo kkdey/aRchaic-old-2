@@ -104,6 +104,7 @@ damageLogo_pos <- function(theta,
   ic <- damage.ic(prop_patterns_list, alpha=renyi_alpha)
 
   grob_list <- list()
+  par(new=TRUE, fig=gridFIG())
   for(l in 1:length(prop_patterns_list)){
   damageLogo.pos.skeleton(pwm = prop_patterns_list[[l]],
                            probs = prob_mutation[l,],
@@ -1019,19 +1020,23 @@ damageLogo.pos.skeleton <- function(pwm,
 
 plot_graph <- function(probs, max_pos, max_prob, col="red",
                        cex=unit(1, "npc"), pch=unit(16,"npc"),
-                       xlab="read position", ylab="mutation probability",
+                       xlab="read pos.", ylab="sig prob.",
                        main="",
-                       cex.axis=unit(0.75, "npc"),
+                       cex.axis=unit(0.8, "npc"),
                        cex.main=unit(1, "npc")){
   # if (length(probs) != max_pos){
   #   stop(cat('probability vector must be of length ', max_pos))
   # }
-  plot(as.numeric(names(probs)), probs/max_prob, xlim = c(0, max_pos), ylim=c(0,1), xlab = xlab, ylab = ylab,
+  plot(as.numeric(names(probs)), probs/max_prob, xlim = c(0, max_pos), ylim=c(0,1),
        type = "b", xaxt = "n", yaxt = "n", cex = cex, pch=pch, col=col, main=main,
-       cex.main=cex.main)
-  axis(side = 1, at = floor(seq(1, max_pos, length.out=5)), cex.axis = cex.axis, lwd.ticks = 2)
+       cex.main=cex.main, ylab="", xlab="")
+  axis(side = 1, at = floor(seq(1, max_pos, length.out=5)), cex.axis = cex.axis, lwd.ticks = 1, tck=-0.05,
+       cex.lab=0.5, mgp=c(1, 0.3, 0))
+  title(xlab = xlab, mgp=c(2,1,0))
   ylimit <- c(0.0, 0.5, 1.0)*max_prob
-  axis(side = 2, at = c(0.0, 0.5, 1.0), labels = round(ylimit,2), cex.axis = cex.axis, lwd.ticks=2)
+  axis(side = 2, at = c(0.0, 0.5, 1.0), labels = round(ylimit,2), cex.axis = cex.axis, lwd.ticks=1, tck=-0.05,
+       cex.lab=0.5, mgp=c(1, 0.3, 0))
+  title(ylab = ylab, mgp=c(2,1,0))
 }
 
 
