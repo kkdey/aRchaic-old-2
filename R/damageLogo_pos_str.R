@@ -54,18 +54,22 @@ damageLogo_pos_str <- function(theta_pool,
                                start=0.0001,
                                renyi_alpha = 1,
                                pop_names=paste0("Cluster ",1:dim(theta)[2]),
-                               logoport_x = 0.30,
-                               logoport_y= 0.75,
+                               logoport_x = 0.24,
+                               logoport_y= 0.50,
                                logoport_width= 0.30,
-                               logoport_height= 0.30,
-                               lineport_x = 0.85,
-                               lineport_y=0.90,
-                               lineport_width=0.25,
-                               lineport_height=0.30,
-                               pieport_x = 0.52,
-                               pieport_y = 0.30,
-                               pieport_width=0.40,
-                               pieport_height=0.4){
+                               logoport_height= 0.40,
+                               lineport_x = 0.70,
+                               lineport_y=0.50,
+                               lineport_width=0.20,
+                               lineport_height=0.25,
+                               pieport_x = 1.18,
+                               pieport_y = 5,
+                               pieport_width=0.70,
+                               pieport_height=0.6,
+                               barport_x = 0.58,
+                               barport_y=0.65,
+                               barport_width=0.25,
+                               barport_height=0.25){
   cols <- dim(theta_pool)[1]
   theta <- theta_pool[1:(cols-8), ]
   theta <- apply(theta, 2, function(x) return(x/sum(x)))
@@ -144,7 +148,11 @@ damageLogo_pos_str <- function(theta_pool,
                                 pieport_x = pieport_x,
                                 pieport_y = pieport_y,
                                 pieport_width=pieport_width,
-                                pieport_height=pieport_height)
+                                pieport_height=pieport_height,
+                                barport_x = barport_x,
+                                barport_y = barport_y,
+                                barport_width = barport_width,
+                                barport_height = barport_height)
 
   }
 }
@@ -165,18 +173,22 @@ damageLogo.pos.str.skeleton <- function(pwm,
                                         start=0.0001,
                                         yscale_change=TRUE,
                                         pop_name = NULL,
-                                        logoport_x=0.4,
+                                        logoport_x=0.3,
                                         logoport_y= 0.5,
-                                        logoport_width= 0.4,
-                                        logoport_height= 0.5,
-                                        lineport_x = 0.95,
-                                        lineport_y=0.85,
-                                        lineport_width=0.25,
-                                        lineport_height=0.3,
-                                        pieport_x = 0.95,
-                                        pieport_y = 0.30,
-                                        pieport_width=0.25,
-                                        pieport_height=0.25){
+                                        logoport_width= 0.3,
+                                        logoport_height= 0.8,
+                                        lineport_x = 0.6,
+                                        lineport_y=0.25,
+                                        lineport_width=0.30,
+                                        lineport_height=0.30,
+                                        pieport_x = 1,
+                                        pieport_y = 0.50,
+                                        pieport_width=0.40,
+                                        pieport_height=0.40,
+                                        barport_x = 0.5,
+                                        barport_y=0.80,
+                                        barport_width=0.25,
+                                        barport_height=0.25){
 
   if (class(pwm) == "data.frame"){
     pwm <- as.matrix(pwm)
@@ -285,7 +297,7 @@ damageLogo.pos.str.skeleton <- function(pwm,
     grid.text("Logo plot", y = unit(1, "npc") + unit(1.5, "lines"),
               gp = gpar(fontsize = 16))
   }else{
-    grid.text(paste0(pop_name), x = unit(1.2, "npc"), y = unit(1, "npc") + unit(1, "lines"),
+    grid.text(paste0(pop_name), x = unit(1.3, "npc"), y = unit(12, "lines"),
               gp = gpar(fontsize = 20, col="black"))
   }
 
@@ -319,13 +331,17 @@ damageLogo.pos.str.skeleton <- function(pwm,
   upViewport(0)
   vps <- baseViewports()
   #pushViewport(vps$figure)
-  vp3 <- viewport(x=pieport_x, y=pieport_y, width=pieport_width, height=pieport_height, just=c("right","bottom"))
+  # vp3 <- viewport(x=pieport_x, y=pieport_y, width=pieport_width, height=pieport_height, just=c("right","bottom"))
  # pushViewport(vp3)
  # par(plt = gridPLT(), new=TRUE)
-  vp <- viewport(width = pieport_width, height = pieport_height, x = pieport_x,
+  vp3 <- viewport(width = pieport_width, height = pieport_height, x = pieport_x,
                  y = unit(pieport_y, "lines"), just = c("right","bottom"))
   p = plot_pie(strand_theta = strand_theta)
-  print(p, vp = vp)
+  print(p, vp = vp3)
+
+  vp4 <- viewport(width = barport_width, height = barport_height, x = barport_x, y = barport_y)
+  p = plot_bar(theta3[,1])
+  print(p, vp = vp4)
   #plot(1:4, col="red", pch=20)
   popViewport(0)
   par(ask=FALSE)
@@ -337,6 +353,7 @@ plot_pie <- function(strand_theta){
   bases <- c(as.character(sapply(names, function(x) return(strsplit(x, "[_]")[[1]][1]))))
   shuffle <- c(match(c("A", "G", "C", "T"), bases[1:4]), 4+ match(c("A", "G", "C", "T"), bases[5:8]))
   strand <- c(as.character(sapply(names, function(x) return(strsplit(x, "[_]")[[1]][2]))))
+  strand <- revalue(factor(strand), c("left"="5' strand break", "right"="3' strand break"))
   sum1 = rep(tapply(strand_theta, strand, sum), each=4)
   strand_theta_2 <- strand_theta/sum1
   df <- data.frame("value" = bases[shuffle], "category"=strand[shuffle], "percentage" = strand_theta_2[shuffle])
@@ -361,16 +378,18 @@ plot_pie <- function(strand_theta){
   # create bar plot
   pie = ggplot(mydf, aes(x = factor(1), y = percentage, fill = bases)) +
     geom_bar(stat = "identity", width = 1) +
-    facet_wrap(~category) +
-    labs(x = "")+
-    labs(y = "strand breaks")+
-    labs(title = "Strand breaks composition", size=5)
+    facet_wrap(~category, nrow=2) +
+    labs(x = "") + labs(y="") + labs(fill="")
+   # labs(y = "strand breaks composition", size=2)+
+   # theme_nothing() + labs(x = NULL, y = NULL)
+   # labs(title = "Strand breaks composition", size=5)
 
   # make a pie
   pie = pie + coord_polar(theta = "y") +
     theme(axis.text = element_blank(),
           axis.ticks = element_blank(),
-          panel.grid  = element_blank())+
+          panel.grid  = element_blank(),
+          panel.border = element_rect(colour = "white")) +
     theme(plot.margin = unit(c(0.01,0.01,0.01,0.01), "cm"))
 
   # add labels
@@ -378,4 +397,18 @@ plot_pie <- function(strand_theta){
 
 }
 
+
+plot_bar <- function(strand_theta){
+  df <- data.frame("value" = strand_theta, "strand"=revalue(factor(names(strand_theta)), c("plus" = "+",  "minus" = "-")))
+  ggplot(df, aes(x=strand, y=value, fill=c("green", "lightpink")))  +
+    geom_bar(stat='identity', width=0.8, position = position_dodge(width=0.9), colour = 'black') +
+    xlab("") + ylim(0,1) + ylab("") + theme(legend.position="none") +
+    geom_text(aes(x=strand, y=value+0.1, label=value)) +
+    geom_text(aes(x=strand, y=value*0.5, label=as.character(strand)), colour="black", size=5)+
+    theme(axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          panel.grid  = element_blank(),
+          panel.border = element_rect(colour = "white")) +
+    coord_flip()
+}
 

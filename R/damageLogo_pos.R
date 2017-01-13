@@ -1020,7 +1020,7 @@ damageLogo.pos.skeleton <- function(pwm,
 
 plot_graph <- function(probs, max_pos, max_prob, col="red",
                        cex=unit(1, "npc"), pch=unit(16,"npc"),
-                       xlab="read pos.", ylab="sig prob.",
+                       xlab="position", ylab="prob. of mutation",
                        main="",
                        cex.axis=unit(0.8, "npc"),
                        cex.main=unit(1, "npc")){
@@ -1032,11 +1032,11 @@ plot_graph <- function(probs, max_pos, max_prob, col="red",
        cex.main=cex.main, ylab="", xlab="")
   axis(side = 1, at = floor(seq(1, max_pos, length.out=5)), cex.axis = cex.axis, lwd.ticks = 1, tck=-0.05,
        cex.lab=0.5, mgp=c(1, 0.3, 0))
-  title(xlab = xlab, mgp=c(2,1,0))
+  title(xlab = xlab, mgp=c(1.5,1,0), cex.lab=0.5)
   ylimit <- c(0.0, 0.5, 1.0)*max_prob
   axis(side = 2, at = c(0.0, 0.5, 1.0), labels = round(ylimit,2), cex.axis = cex.axis, lwd.ticks=1, tck=-0.05,
        cex.lab=0.5, mgp=c(1, 0.3, 0))
-  title(ylab = ylab, mgp=c(2,1,0))
+  title(ylab = ylab, mgp=c(1.5,1,0), cex.lab=0.5)
 }
 
 
