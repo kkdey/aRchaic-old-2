@@ -101,7 +101,7 @@ damageLogo_pos_str <- function(theta_pool,
   if(is.null(sig_names))
     sig_names <- rownames(theta)
 
-  prob_mutation <- filter_signatures_only_location(t(theta), max_pos = max_pos, flanking_bases = flanking_bases)
+  prob_mutation <- filter_signatures_only_location(t(theta_new), max_pos = max_pos, flanking_bases = flanking_bases)
   prob_mutation <- t(apply(prob_mutation, 1, function(x) {
     y <- x[!is.na(x)];
     return(y/sum(y))

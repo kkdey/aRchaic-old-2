@@ -16,6 +16,12 @@
 
 
 filter_signatures_wo_location <- function(counts){
+
+  leftflank <- grep("left", colnames(counts))
+  rightflank <- grep("right", colnames(counts))
+  if(length(leftflank) > 0 | length(rightflank) > 0){
+    counts <- counts[, - c(leftflank, rightflank)]
+  }
   names <- colnames(counts);
 
   names_mod <- as.vector(sapply(names, function(x) strsplit(x, "_")[[1]][1]));

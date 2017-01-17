@@ -16,6 +16,13 @@
 #'
 
 filter_signatures_per_substitution <- function(counts, pattern, flanking_bases=2, use_prop=FALSE){
+
+   leftflank <- grep("left", colnames(counts))
+   rightflank <- grep("right", colnames(counts))
+   if(length(leftflank) > 0 | length(rightflank) > 0){
+      counts <- counts[, - c(leftflank, rightflank)]
+   }
+
    mutation_sigs <- colnames(counts)
    sub_pattern <- sapply(mutation_sigs, function(x) paste(strsplit(as.character(x), "")[[1]][(flanking_bases+1):(flanking_bases+4)], collapse=""))
    indices <- which(!is.na(match(sub_pattern, pattern)))

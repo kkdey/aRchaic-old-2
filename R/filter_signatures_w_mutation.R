@@ -15,6 +15,13 @@
 #'
 
 filter_signatures_w_mutation <- function(counts, flanking_bases=2){
+
+  leftflank <- grep("left", colnames(counts))
+  rightflank <- grep("right", colnames(counts))
+  if(length(leftflank) > 0 | length(rightflank) > 0){
+    counts <- counts[, - c(leftflank, rightflank)]
+  }
+
   names <- colnames(counts);
 
   names_mod <- as.vector(sapply(names, function(x) paste(strsplit(x, "")[[1]][(flanking_bases+1):(flanking_bases+4)], collapse="")))

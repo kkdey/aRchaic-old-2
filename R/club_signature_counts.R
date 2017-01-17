@@ -17,7 +17,13 @@
 #'
 
 
-club_signature_counts <- function(signature_counts, flanking_bases=2){
+club_signature_counts <- function(signature_pos_str_counts, flanking_bases=2){
+
+  leftflank <- grep("left", colnames(signature_pos_str_counts))
+  rightflank <- grep("right", colnames(signature_pos_str_counts))
+  signature_counts_flank <- signature_pos_str_counts[,c(leftflank, rightflank)]
+  signature_counts <- signature_pos_str_counts[, -c(leftflank, rightflank)]
+
   signature_set <- colnames(signature_counts)
 
   signature_set_split <- do.call(rbind, lapply(signature_set, function(x) strsplit(as.character(x), split="")[[1]][1:(4+2*flanking_bases)]))
@@ -32,7 +38,7 @@ club_signature_counts <- function(signature_counts, flanking_bases=2){
 
   signature_set_3 <- signature_set_2
 
-  signature_set_3[indices] <- sapply(signature_set_2[indices], function(x) {
+  temp <- sapply(signature_set_2[indices], function(x) {
                                                 bases <- strsplit(as.character(x), split="")[[1]]
                                                 left_bases <- bases[1:(flanking_bases)]
                                                 right_bases <- bases[(flanking_bases+4+1):(4+2*flanking_bases)]
@@ -41,6 +47,7 @@ club_signature_counts <- function(signature_counts, flanking_bases=2){
                                                 newsig <- paste0(c(rev(right_bases), bases[(flanking_bases+1):(flanking_bases+4)], rev(left_bases), other_bases), collapse="")
                                                 return(newsig)
                                            })
+  signature_set_3[indices] <-  temp
 
 
 
@@ -53,7 +60,8 @@ club_signature_counts <- function(signature_counts, flanking_bases=2){
     stop("G->A conversion did not fully work; aborting")
   }
 
-  return(signature_counts_pooled)
+  signature_pos_str_counts_pooled <- cbind(signature_counts_pooled, signature_counts_flank)
+  return(signature_pos_str_counts_pooled)
 }
 
 

@@ -16,10 +16,16 @@
 
 filter_signatures_by_location <-  function(mat, max_pos = 23, flanking_bases=2){
   input_pos <- 1:max_pos;
+  leftflank <- grep("left", colnames(mat))
+  rightflank <- grep("right", colnames(mat))
+  if(length(leftflank) > 0 | length(rightflank) > 0){
+    mat <- mat[, - c(leftflank, rightflank)]
+  }
+
   pos <- as.numeric(sapply(as.character(colnames(mat)), function(l)
   {
     sym <- strsplit(as.character(l), "")[[1]]
-    return(paste(sym[((4+2*flanking_bases)+2):length(sym)], collapse=""))
+    return(paste(sym[((4+2*flanking_bases)+4):length(sym)], collapse=""))
   }))
 
   reduced_dat <- mat[,which(!is.na(match(pos, input_pos)))]
