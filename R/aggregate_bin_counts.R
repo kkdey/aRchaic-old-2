@@ -23,7 +23,10 @@ aggregate_bin_counts <- function(dir,
                                  breaks = NULL,
                                  flanking_bases = 2){
 
-  ancient_files <- list.files(dir);
+  leftflank_files <- list.files(dir, pattern="leftflank")
+  rightflank_files <- list.files(dir, pattern="rightflank")
+  ancient_files <- setdiff(list.files(dir), union(leftflank_files, rightflank_files))
+
 
   signature_ancient <- vector(mode="list")
   signature_counts_ancient <- vector(mode="list")
@@ -35,6 +38,7 @@ aggregate_bin_counts <- function(dir,
                                        type=2)
     signature_counts_ancient[[num]] <- tmp_dat[,2];
     signature_ancient[[num]] <- as.character(tmp_dat[,1]);
+    cat("Reading file ", num, "\n")
   }
 
   merged_signature_ancient <- signature_ancient[[1]]
@@ -68,5 +72,29 @@ aggregate_bin_counts <- function(dir,
   rownames(ancient_counts_filtered) <- ancient_files_filt
   colnames(ancient_counts_filtered) <- merged_signature_ancient[-indices]
 
-  return(ancient_counts_filtered)
+  message("Reading the left flanking bases")
+  left_flank <- numeric()
+  for(tmp in leftflank_files){
+    dat <- read.csv(paste0(dir, tmp), header = FALSE)
+    dat1 <- dat[match(c("A", "G", "C", "T"), dat[,1]),]
+    left_flank <- rbind(left_flank, t(dat1[,2]))
+  }
+
+  rownames(left_flank) <- ancient_files_filt
+  colnames(left_flank) <- paste0(c("A", "G", "C", "T"), "_", "left")
+
+
+  message("Reading the right flanking bases")
+  right_flank <- numeric()
+  for(tmp in rightflank_files){
+    dat <- read.csv(paste0(dir, tmp), header = FALSE)
+    dat1 <- dat[match(c("A", "G", "C", "T"), dat[,1]),]
+    right_flank <- rbind(right_flank, t(dat1[,2]))
+  }
+
+  rownames(right_flank) <- ancient_files_filt
+  colnames(right_flank) <- paste0(c("A", "G", "C", "T"), "_", "right")
+
+  pooled_data <- cbind(ancient_counts_filtered, left_flank, right_flank)
+  return(pooled_data)
 }

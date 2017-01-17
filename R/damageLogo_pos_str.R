@@ -34,6 +34,7 @@
 #'
 #' @import grid
 #' @import gridBase
+#' @import dplyr
 #'
 #' @export
 
@@ -70,10 +71,32 @@ damageLogo_pos_str <- function(theta_pool,
                                barport_y=0.65,
                                barport_width=0.25,
                                barport_height=0.25){
-  cols <- dim(theta_pool)[1]
-  theta <- theta_pool[1:(cols-8), ]
-  theta <- apply(theta, 2, function(x) return(x/sum(x)))
-  strand_theta <- theta_pool[(cols-7):cols, ]
+
+  signature_set <- rownames(theta_pool)
+
+  indices_left <- grep("left", signature_set)
+  indices_right <- grep("right", signature_set)
+
+  breaks_theta <- topic_clus$theta[c(indices_left, indices_right),]
+
+  theta_new <- topic_clus$theta[-c(indices_left, indices_right),]
+  theta_new<- apply(theta_new, 2, function(x) return(x/sum(x)))
+
+  indices_minus <- grep("_-_", signature_set)
+  strand_theta <- data.frame("minus" = colSums(theta_new[indices_minus,]),
+                             "plus" = colSums(theta_new[-indices_minus,]))
+  strand_theta_vec <- data.frame(strand_theta[1,])
+
+  signature_set_new <- rownames(theta_new)
+  signature_set_split <- do.call(rbind, lapply(signature_set_new, function(x) {
+    y = strsplit(as.character(x), split="")[[1]][-c((4+2*flanking_bases + 1):(4+2*flanking_bases + 2))]
+    return(paste0(y, collapse=""))
+  }))
+
+  library(dplyr)
+  theta <- tbl_df(theta_new) %>% mutate(sig = signature_set_split) %>% group_by(sig) %>% summarise_each(funs(sum)) %>% as.data.frame()
+  rownames(theta) <-  theta[,1]
+  theta <- theta[,-1]
 
   if(is.null(sig_names))
     sig_names <- rownames(theta)
@@ -119,11 +142,11 @@ damageLogo_pos_str <- function(theta_pool,
   ic <- damage.ic(prop_patterns_list, alpha=renyi_alpha)
 
   grob_list <- list()
-  par(new=TRUE, fig=gridFIG())
   for(l in 1:length(prop_patterns_list)){
     damageLogo.pos.str.skeleton(pwm = prop_patterns_list[[l]],
                                 probs = prob_mutation[l,],
-                                strand_theta = theta2[,l],
+                                breaks_theta_vec = breaks_theta[,l],
+                                strand_theta_vec = strand_theta[l,],
                                 ic = ic[,l],
                                 max_pos = max_pos,
                                 max_prob = max_prob,
@@ -159,7 +182,8 @@ damageLogo_pos_str <- function(theta_pool,
 
 damageLogo.pos.str.skeleton <- function(pwm,
                                         probs,
-                                        strand_theta,
+                                        breaks_theta_vec,
+                                        strand_theta_vec,
                                         ic,
                                         max_pos,
                                         max_prob,
@@ -336,34 +360,34 @@ damageLogo.pos.str.skeleton <- function(pwm,
  # par(plt = gridPLT(), new=TRUE)
   vp3 <- viewport(width = pieport_width, height = pieport_height, x = pieport_x,
                  y = unit(pieport_y, "lines"), just = c("right","bottom"))
-  p = plot_pie(strand_theta = strand_theta)
+  p = plot_pie(breaks_theta_vec = breaks_theta_vec)
   print(p, vp = vp3)
 
   vp4 <- viewport(width = barport_width, height = barport_height, x = barport_x, y = barport_y)
-  p = plot_bar(theta3[,1])
+  p = plot_bar(strand_theta_vec = strand_theta_vec)
   print(p, vp = vp4)
   #plot(1:4, col="red", pch=20)
   popViewport(0)
   par(ask=FALSE)
 }
 
-plot_pie <- function(strand_theta){
+plot_pie <- function(breaks_theta_vec){
 
-  names = names(strand_theta)
+  names = names(breaks_theta_vec)
   bases <- c(as.character(sapply(names, function(x) return(strsplit(x, "[_]")[[1]][1]))))
   shuffle <- c(match(c("A", "G", "C", "T"), bases[1:4]), 4+ match(c("A", "G", "C", "T"), bases[5:8]))
   strand <- c(as.character(sapply(names, function(x) return(strsplit(x, "[_]")[[1]][2]))))
   strand <- revalue(factor(strand), c("left"="5' strand break", "right"="3' strand break"))
-  sum1 = rep(tapply(strand_theta, strand, sum), each=4)
-  strand_theta_2 <- strand_theta/sum1
-  df <- data.frame("value" = bases[shuffle], "category"=strand[shuffle], "percentage" = strand_theta_2[shuffle])
+  sum1 = rep(tapply(breaks_theta_vec, strand, sum), each=4)
+  breaks_theta_vec_2 <- breaks_theta_vec/sum1
+  df <- data.frame("value" = bases[shuffle], "category"=strand[shuffle], "percentage" = breaks_theta_vec_2[shuffle])
 
   # get counts and melt it
   data.m = df
   names(data.m)[3] = "percentage"
 
   # calculate percentage:
-  m1 = plyr::ddply(data.m, .(category), summarize, ratio=percentage/sum(percentage))
+  m1 = plyr::ddply(data.m, .(category), plyr::summarize, ratio=percentage/sum(percentage))
 
   #order data frame (needed to comply with percentage column):
   #m2 = data.m[order(data.m$category),]
@@ -398,12 +422,12 @@ plot_pie <- function(strand_theta){
 }
 
 
-plot_bar <- function(strand_theta){
-  df <- data.frame("value" = strand_theta, "strand"=revalue(factor(names(strand_theta)), c("plus" = "+",  "minus" = "-")))
+plot_bar <- function(strand_theta_vec){
+  df <- data.frame("value" = as.numeric(t(strand_theta_vec)), "strand"=revalue(factor(names(strand_theta_vec)), c("plus" = "+",  "minus" = "-")))
   ggplot(df, aes(x=strand, y=value, fill=c("green", "lightpink")))  +
     geom_bar(stat='identity', width=0.8, position = position_dodge(width=0.9), colour = 'black') +
     xlab("") + ylim(0,1) + ylab("") + theme(legend.position="none") +
-    geom_text(aes(x=strand, y=value+0.1, label=value)) +
+  #  geom_text(aes(x=strand, y=value+0.1, label=value)) +
     geom_text(aes(x=strand, y=value*0.5, label=as.character(strand)), colour="black", size=5)+
     theme(axis.text = element_blank(),
           axis.ticks = element_blank(),

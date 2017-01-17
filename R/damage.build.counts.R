@@ -45,16 +45,16 @@ damage_build_bin_counts =  function(file,
 
   bin_values <- .bincode(min_dist_from_end, bins, TRUE)
 
-  modified_file <- cbind.data.frame(file[,1], file[,4], bin_values)
-  colnames(modified_file) <- c("pattern", "counts", "bin_values")
-  
+  modified_file <- cbind.data.frame(file[,1], file[,4], file[,5], bin_values)
+  colnames(modified_file) <- c("pattern", "strand", "counts", "bin_values")
+
   library(plyr)
-  df1 <- plyr::ddply(modified_file, .(pattern, bin_values), summarise, newvar = sum(counts))
-  colnames(df1) <- c("pattern", "bin", "counts")
+  df1 <- plyr::ddply(modified_file, .(pattern, strand, bin_values), summarise, newvar = sum(counts))
+  colnames(df1) <- c("pattern", "strand", "bin", "counts")
 
   if(type==2){
-    df2 <- cbind.data.frame(paste0(df1[,1], "_", df1[,2]), df1[,3])
-    colnames(df2) <- c("pattern-bins", "counts")
+    df2 <- cbind.data.frame(paste0(df1[,1], "_", df1[,2], "_", df1[,3]), df1[,4])
+    colnames(df2) <- c("pattern-strand-bin", "counts")
     out <- df2
   }else{
     out <- df1

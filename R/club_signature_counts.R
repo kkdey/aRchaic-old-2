@@ -37,6 +37,7 @@ club_signature_counts <- function(signature_counts, flanking_bases=2){
                                                 left_bases <- bases[1:(flanking_bases)]
                                                 right_bases <- bases[(flanking_bases+4+1):(4+2*flanking_bases)]
                                                 other_bases <- bases[(4+2*flanking_bases+1):nchar(x)]
+                                                if(other_bases[2] == "-") {other_bases[2] = "+"} else {other_bases[2] = "-"}
                                                 newsig <- paste0(c(rev(right_bases), bases[(flanking_bases+1):(flanking_bases+4)], rev(left_bases), other_bases), collapse="")
                                                 return(newsig)
                                            })
