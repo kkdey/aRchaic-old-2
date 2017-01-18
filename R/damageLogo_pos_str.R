@@ -35,7 +35,7 @@
 #' @import grid
 #' @import gridBase
 #' @import dplyr
-#' @importFrom plyr revalue
+#' @import plyr
 #'
 #' @export
 
@@ -94,7 +94,7 @@ damageLogo_pos_str <- function(theta_pool,
     return(paste0(y, collapse=""))
   }))
 
-  theta <- tbl_df(data.frame(theta_new)) %>% mutate(sig = signature_set_split) %>% group_by(sig) %>% summarise_each(funs(sum)) %>% as.data.frame()
+  theta <- tbl_df(data.frame(theta_new)) %>% mutate(sig = signature_set_split) %>% group_by(sig) %>% dplyr::summarise_each(funs(sum)) %>% as.data.frame()
   rownames(theta) <-  theta[,1]
   theta <- theta[,-1]
 
@@ -387,7 +387,7 @@ plot_pie <- function(breaks_theta_vec){
   names(data.m)[3] = "percentage"
 
   # calculate percentage:
-  m1 = plyr::ddply(data.m, .(category), plyr::summarize, ratio=percentage/sum(percentage))
+  m1 = plyr::ddply(data.m, plyr::.(category), plyr::summarize, ratio=percentage/sum(percentage))
 
   #order data frame (needed to comply with percentage column):
   #m2 = data.m[order(data.m$category),]
