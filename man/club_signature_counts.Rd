@@ -4,12 +4,12 @@
 \alias{club_signature_counts}
 \title{Club signatures from the two strands to remove strand bias}
 \usage{
-club_signature_counts(signature_counts, flanking_bases = 2)
+club_signature_counts(signature_pos_str_counts, flanking_bases = 2)
 }
 \arguments{
-\item{signature_counts}{The matrix of counts of all signatures as produced by \code{aggregate_bin_counts}.}
-
 \item{flanking_bases}{The number of flanking bases. Defaults to 2.}
+
+\item{signature_counts}{The matrix of counts of all signatures as produced by \code{aggregate_bin_counts}.}
 }
 \value{
 Returns a matrix of clubbed signatures. The default choice of the mutation

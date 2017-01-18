@@ -54,7 +54,7 @@ damageLogo_pos_str <- function(theta_pool,
                                mut_width=2,
                                start=0.0001,
                                renyi_alpha = 1,
-                               pop_names=paste0("Cluster ",1:dim(theta)[2]),
+                               pop_names=paste0("Cluster ",1:dim(theta_pool)[2]),
                                logoport_x = 0.24,
                                logoport_y= 0.50,
                                logoport_width= 0.30,
@@ -77,9 +77,9 @@ damageLogo_pos_str <- function(theta_pool,
   indices_left <- grep("left", signature_set)
   indices_right <- grep("right", signature_set)
 
-  breaks_theta <- topic_clus$theta[c(indices_left, indices_right),]
+  breaks_theta <- theta_pool[c(indices_left, indices_right),]
 
-  theta_new <- topic_clus$theta[-c(indices_left, indices_right),]
+  theta_new <- theta_pool[-c(indices_left, indices_right),]
   theta_new<- apply(theta_new, 2, function(x) return(x/sum(x)))
 
   indices_minus <- grep("_-_", signature_set)
