@@ -35,6 +35,7 @@
 #' @import grid
 #' @import gridBase
 #' @import dplyr
+#' @importFrom plyr revalue
 #'
 #' @export
 
@@ -376,7 +377,7 @@ plot_pie <- function(breaks_theta_vec){
   bases <- c(as.character(sapply(names, function(x) return(strsplit(x, "[_]")[[1]][1]))))
   shuffle <- c(match(c("A", "G", "C", "T"), bases[1:4]), 4+ match(c("A", "G", "C", "T"), bases[5:8]))
   strand <- c(as.character(sapply(names, function(x) return(strsplit(x, "[_]")[[1]][2]))))
-  strand <- revalue(factor(strand), c("left"="5' strand break", "right"="3' strand break"))
+  strand <- plyr::revalue(factor(strand), c("left"="5' strand break", "right"="3' strand break"))
   sum1 = rep(tapply(breaks_theta_vec, strand, sum), each=4)
   breaks_theta_vec_2 <- breaks_theta_vec/sum1
   df <- data.frame("value" = bases[shuffle], "category"=strand[shuffle], "percentage" = breaks_theta_vec_2[shuffle])
@@ -422,7 +423,7 @@ plot_pie <- function(breaks_theta_vec){
 
 
 plot_bar <- function(strand_theta_vec){
-  df <- data.frame("value" = as.numeric(t(strand_theta_vec)), "strand"=revalue(factor(names(strand_theta_vec)), c("plus" = "+",  "minus" = "-")))
+  df <- data.frame("value" = as.numeric(t(strand_theta_vec)), "strand"=plyr::revalue(factor(names(strand_theta_vec)), c("plus" = "+",  "minus" = "-")))
   ggplot(df, aes(x=strand, y=value, fill=c("green", "lightpink")))  +
     geom_bar(stat='identity', width=0.8, position = position_dodge(width=0.9), colour = 'black') +
     xlab("") + ylim(0,1) + ylab("") + theme(legend.position="none") +
