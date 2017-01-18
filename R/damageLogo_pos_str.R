@@ -93,8 +93,7 @@ damageLogo_pos_str <- function(theta_pool,
     return(paste0(y, collapse=""))
   }))
 
-  library(dplyr)
-  theta <- tbl_df(theta_new) %>% mutate(sig = signature_set_split) %>% group_by(sig) %>% summarise_each(funs(sum)) %>% as.data.frame()
+  theta <- tbl_df(data.frame(theta_new)) %>% mutate(sig = signature_set_split) %>% group_by(sig) %>% summarise_each(funs(sum)) %>% as.data.frame()
   rownames(theta) <-  theta[,1]
   theta <- theta[,-1]
 
