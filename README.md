@@ -1,37 +1,26 @@
-## Welcome to GitHub Pages
 
-You can use the [editor on GitHub](https://github.com/kkdey/aRchaic/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+<img src="vignettes/logo_design.jpg" align="left" />
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-### Markdown
+<span style="color:orange;">
+<font size="6"> Introduction </font>
+</span>
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+**aRchaic** is a R/python software package developed by [Kushal Dey](https://kkdey.github.io/) and [Hussein Al Asadi](https://halasadi.wordpress.com/) in collaboration with [Matthew Stephens](http://stephenslab.uchicago.edu/) and [John Novembre](https://jnpopgen.org/).It is targeted towards exploratory analysis, clustering and summary visualization of patterns of DNA damage and other mutational profiles in large scale ancient DNA data. 
 
-```markdown
-Syntax highlighted code block
+<span style="color:orange;">
+<font size="6"> Overview </font>
+</span>
 
-# Header 1
-## Header 2
-### Header 3
 
-- Bulleted
-- List
+<span style="color:orange;">
+<font size="6"> Contact </font>
+</span>
 
-1. Numbered
-2. List
+Having trouble with aRchaic? 
 
-**Bold** and _Italic_ and `Code` text
+Leave an issue in our [Github page](https://github.com/kkdey/aRchaic/issues) 
+or contact us : <a href="mailto:kshldey@gmail.com">kkdey@uchicago.edu</a>, <a href="mailto:halasadi@gmail.com">halasadi@uchicago.edu</a>
 
-[Link](url) and ![Image](src)
-```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
 
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/kkdey/aRchaic/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
