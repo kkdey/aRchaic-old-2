@@ -1,5 +1,5 @@
 
-<img src="vignettes/logo_design.jpg" align="left" />
+<img src="articles/logo_design.jpg" align="left" />
 
 
 <span style="color:orange;">
