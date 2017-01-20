@@ -18,10 +18,10 @@
 <font size="6"> Contact </font>
 </span>
 
-Having trouble with aRchaic? 
-
 <font size="4">
-Leave an issue in our [Github page](https://github.com/kkdey/aRchaic/issues) 
+Having trouble with **aRchaic**? </font>
+
+<font size="4"> Leave an issue in our [Github page](https://github.com/kkdey/aRchaic/issues) 
 or contact us : <a href="mailto:kshldey@gmail.com">kkdey@uchicago.edu</a>, <a href="mailto:halasadi@gmail.com">halasadi@uchicago.edu</a>  </font>
 
 
