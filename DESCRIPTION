@@ -8,7 +8,6 @@ Authors@R: c(
     person("Hussein", "Al-Asadi", email = "halasadi@uchicago.edu", role = "aut"),
     person("Matthew", "Stephens", email = "stephens999@gmail.com", role ="ctb"),
     person("John", "Novembre", email="jnovembre@uchicago edu", role="ctb"))
-Maintainer: Kushal Dey <kkdey@uchicago.edu>
 Description: Performs visualization, clustering and comparative exploratory analysis of ancient and modern BAM files.
 Depends:
     R (>= 3.2)
