@@ -16,10 +16,10 @@
 <font size="4"> To install and run **aRchaic**, the user needs to install the following
 
 <ul style="list-style-type:circle">
-  <li><a href="https://git-scm.com/"> Git </a></li>
-  <li><a href="https://www.python.org/"> Python (versions 2 and 3) </a></li>
-  <li><a href="https://cran.r-project.org/"> R (>= 3.3.0) </a></li>
-  <li> R libraries - <a href="https://github.com/pysam-developers/pysam/"> grid </a>, <a href="https://cran.r-project.org/web/packages/gridBase/index.html"> gridBase </a>, <a href="http://ggplot2.org/"> ggplot2 </a>, <a href="https://github.com/kkdey/maptpx"> maptpx </a>, <a href="https://github.com/kkdey/CountClust"> CountClust </a>, <a href="https://github.com/kkdey/Logolas"> Logolas </a>, <a href="https://github.com/kkdey/classtpx"> classtpx </a> </li>
+  <li><a href="https://git-scm.com/"> <font size="4"> Git </font> </a></li>
+  <li><a href="https://www.python.org/"> <font size="4"> Python (versions 2 and 3) </font> </a></li>
+  <li><a href="https://cran.r-project.org/"> <font size="4"> R (>= 3.3.0) </font> </a></li>
+  <li> <font size="4"> R libraries - <a href="https://github.com/pysam-developers/pysam/"> grid </a>, <a href="https://cran.r-project.org/web/packages/gridBase/index.html"> gridBase </a>, <a href="http://ggplot2.org/"> ggplot2 </a>, <a href="https://github.com/kkdey/maptpx"> maptpx </a>, <a href="https://github.com/kkdey/CountClust"> CountClust </a>, <a href="https://github.com/kkdey/Logolas"> Logolas </a>, <a href="https://github.com/kkdey/classtpx"> classtpx </a> </li> </font>
 </ul> </font>
 
 
@@ -59,17 +59,17 @@
 
 <font size="4"> Once the <i> mutational profiles </i>  have been recorded for each BAM file (corresponding to each sample from the population of interst), **aRchaic** can be used to cluster the samples based on their  <i> mutational profiles </i> </font>
 
-<font size="4"> For the clustering model, we draw analogy of our model with [ADMIXTURE](https://www.genetics.ucla.edu/software/admixture/) and [STRUCTURE](http://pritchardlab.stanford.edu/structure.html). In Admixture, for $K=2$, each person (say an African-American) is represented as a mixture of two ancestries - expectedly the African ancestry and the American ancestry - where ancestries are defined by a probability vector on allele frequencies. </font>
+<p> <font size="4"> For the clustering model, we draw analogy of our model with <a href="https://www.genetics.ucla.edu/software/admixture/">ADMIXTURE </a> and <a href="http://pritchardlab.stanford.edu/structure.html">STRUCTURE </a>. In ADMIXTURE, for K=2, each person (say an African-American) is represented as a mixture of two ancestries - expectedly the African ancestry and the American ancestry - where ancestries are defined by a probability vector on allele frequencies. </font> </p>
 
-<font size="4"> In our model, for $K=2$, each sample can be represented as a mixture of two  <it> mutational signatures </it>, where a <it> mutational signature </it> is a probability vectors on mutational patterns. The mixture proportions are called <it> signature admixture probabilities </it>. </font>
+<p> <font size="4"> In our model, for K=2, each sample can be represented as a mixture of two  <it> mutational signatures </it>, where a <it> mutational signature </it> is a probability vectors on mutational patterns. The mixture proportions are called <it> signature admixture probabilities </it>. </font> </p>
 
-<font size="4"> For instance, since one expects to see a lot of C &#8594; T changes in ancient DNA, sor aDNA samples, a mutational signature can be expected to have very high probability on mutational patterns that consist of the C &#8594; T mutation. </font>
+<p> <font size="4"> For instance, since one expects to see a lot of C &#8594; T changes in ancient DNA, sor aDNA samples, a mutational signature can be expected to have very high probability on mutational patterns that consist of the C &#8594; T mutation. </font> </p>
 
-<font size="4"> Another way to see this is if we have a contaminated sample of ancient DNA, that reads from the sample can be assumed to come either from a modern mutational <it> signature </it> or an ancient mutational <it> signature </it> with certain probability. </font>
+<p><font size="4"> Another way to see this is if we have a contaminated sample of ancient DNA, that reads from the sample can be assumed to come either from a modern mutational <it> signature </it> or an ancient mutational <it> signature </it> with certain probability. </font></p>
 
-<font size="4"> We present below a graphical illustration of our approach. </font>
+<p><font size="4"> We present below a graphical illustration of our approach. </font></p>
 
-<img src="articles/overview.png" align="left", style="width:700px;height:400px;" />
+<img src="articles/overview.png" align="left", style="width:800px;height:500px;" />
 
 
 <span style="color:orange;">
