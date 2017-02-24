@@ -61,12 +61,26 @@ gsub2 <- function(pattern, replacement, x, ...) {
   x
 }
 
-signatureclub <- function(signature_set){
+signatureclub <- function(signature_set, flanking_bases){
   from <- c('A','T','G','C')
   to <- c('t','a','c','g');
   signature_set_mod <- array(0, length(signature_set));
   for(m in 1:length(signature_set)){
-    signature_set_mod[m] <- toupper(gsub2(from, to, signature_set[m]))
+    temp <- toupper(gsub2(from, to, signature_set[m]))
+    temp_split <- strsplit(as.character(temp), split="")[[1]]
+    side1 <- temp_split[1:flanking_bases]
+    side2 <- temp_split[(5+flanking_bases):(4+2*flanking_bases)]
+    temp_split[(5+flanking_bases):(4+2*flanking_bases)] <- rev(side1)
+    temp_split[1:flanking_bases] <- rev(side2)
+    sign <- temp_split[6+2*flanking_bases]
+    if(sign=="-"){sign = "+"}else if(sign=="+"){sign = "-"}
+    leftb <- temp_split[8+2*flanking_bases]
+    rightb <- temp_split[10+2*flanking_bases]
+    temp_split[10+2*flanking_bases] <- leftb
+    temp_split[8+2*flanking_bases] <- rightb
+    temp_split[6+2*flanking_bases] <- sign
+    temp_new <- paste0(temp_split, collapse = "")
+    signature_set_mod[m] <- temp_new
   }
   return(signature_set_mod)
 }

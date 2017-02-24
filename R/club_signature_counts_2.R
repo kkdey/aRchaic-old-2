@@ -1,4 +1,4 @@
-#' @title Club signatures from the two strands to remove strand bias
+#' @title Club signatures accounting for the strand break and strand effect
 #'
 #' @description Function for clubbing signatures from the two strands to remove
 #' strnad bias. An example is G->A and C->T are clubbed into C->T to remove the bias
@@ -17,7 +17,7 @@
 #'
 
 
-club_signature_counts <- function(signature_counts, flanking_bases=2){
+club_signature_counts_2 <- function(signature_counts, flanking_bases=1){
 
   # leftflank <- grep("left", colnames(signature_pos_str_counts))
   # rightflank <- grep("right", colnames(signature_pos_str_counts))
@@ -25,16 +25,7 @@ club_signature_counts <- function(signature_counts, flanking_bases=2){
   # signature_counts <- signature_pos_str_counts[, -c(leftflank, rightflank)]
 
   signature_set <- colnames(signature_counts)
-
-  signature_set_split <- do.call(rbind, lapply(signature_set, function(x) strsplit(as.character(x), split="")[[1]][1:(4+2*flanking_bases)]))
-
-  indices_G <-  which(signature_set_split[,(flanking_bases+1)]=="G");
-  indices_A <-  which(signature_set_split[,(flanking_bases+1)]=="A");
-
-  indices <- c(indices_G, indices_A);
-
-  signature_set_2 <- signature_set
-  signature_set_2[indices] <- signatureclub(signature_set[indices], flanking_bases=flanking_bases)
+  signature_set_2 <- signatureclub2(signature_set, flanking_bases = flanking_bases)
 
   # signature_set_3 <- signature_set_2
   #
@@ -60,4 +51,43 @@ club_signature_counts <- function(signature_counts, flanking_bases=2){
   return(signature_counts_pooled)
 }
 
+gsub2 <- function(pattern, replacement, x, ...) {
+  for(i in 1:length(pattern))
+    x <- chartr(pattern[i], replacement[i], x, ...)
+  x
+}
+
+signatureclub2 <- function(signature_set, flanking_bases){
+  from <- c('A','T','G','C')
+  to <- c('t','a','c','g');
+  signature_set_mod <- array(0, length(signature_set));
+  for(m in 1:length(signature_set)){
+    if(substring(signature_set[m], (1+flanking_bases), (1+flanking_bases)) == "A" | substring(signature_set[m], (1+flanking_bases), (1+flanking_bases)) == "G"){
+      temp_split <- strsplit(as.character(signature_set[m]), split="")[[1]]
+      bases_flanked <- toupper(gsub2(from, to, substring(signature_set[m], 1, (4+2*flanking_bases))))
+      temp_split[1:(4+2*flanking_bases)] <- strsplit(as.character(bases_flanked), split="")[[1]]
+      side1 <- temp_split[1:flanking_bases]
+      side2 <- temp_split[(5+flanking_bases):(4+2*flanking_bases)]
+      temp_split[(5+flanking_bases):(4+2*flanking_bases)] <- rev(side1)
+      temp_split[1:flanking_bases] <- rev(side2)
+      sign <- temp_split[6+2*flanking_bases]
+      if(sign == "+"){
+        breakbase <- temp_split[8+2*flanking_bases]
+      }else if (sign == "-"){
+        breakbase <- toupper(to[match(temp_split[10+2*flanking_bases], from)])
+      }
+    }else{
+      temp_split <- strsplit(as.character(signature_set[m]), split="")[[1]]
+      sign <- temp_split[6+2*flanking_bases]
+      if(sign == "+"){
+        breakbase <- temp_split[8+2*flanking_bases]
+      }else if (sign == "-"){
+        breakbase <- toupper(to[match(temp_split[10+2*flanking_bases], from)])
+      }
+    }
+    temp_new <- paste0(c(temp_split[1:(7+2*flanking_bases)], breakbase, temp_split[(11+2*flanking_bases):(length(temp_split))]), collapse = "")
+    signature_set_mod[m] <- temp_new
+  }
+  return(signature_set_mod)
+}
 

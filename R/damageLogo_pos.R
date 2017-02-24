@@ -143,7 +143,7 @@ pwm2ic<-function(pwm) {
   ic
 }
 
-ic_computer <-function(mat, alpha) {
+ic_computer_2 <-function(mat, alpha) {
   mat <- apply(mat, 2, function(x) return(x/sum(x)))
   npos<-ncol(mat)
   ic <-numeric(length=npos)
@@ -177,7 +177,7 @@ damage.ic<-function(pwm, alpha=1) {
       mat <- cbind(mat, pwm[[j]][,i])
     }
     mat_clean <- mat[rowSums(mat) != 0,]
-    ic[i,] <- ic_computer(mat_clean, alpha)
+    ic[i,] <- ic_computer_2(mat_clean, alpha)
   }
 
   return(ic)
@@ -766,7 +766,7 @@ letter_T_to_C <- function(x.pos,y.pos,ht,wt,id=NULL){
   x <- x.pos + wt*xpool
   y <- y.pos + ht*ypool
 
-  fill=c("blue","red","grey80")
+  fill=c("red","blue","grey80")
 
   list(x=x,y=y,id=id_pool,fill=fill)
 
@@ -812,7 +812,7 @@ letter_T_to_A <- function(x.pos,y.pos,ht,wt,id=NULL){
 ################# add letters to logo plot #########################
 
 
-addLetter <- function(letters,which,x.pos,y.pos,ht,wt){
+addLetter2 <- function(letters,which,x.pos,y.pos,ht,wt){
 
   if (which == "A"){
     letter <- letterA(x.pos,y.pos,ht,wt)
@@ -923,7 +923,7 @@ damageLogo.pos.skeleton <- function(pwm,
     for (i in 1:length(chars)){
       letter <- chars[letterOrder[i]]
       ht <- hts[letterOrder[i]]
-      if (ht>0) letters <- addLetter(letters,letter,x.pos,y.pos,ht,wt[j])
+      if (ht>0) letters <- addLetter2(letters,letter,x.pos,y.pos,ht,wt[j])
       y.pos <- y.pos + ht + start
     }
     x.pos <- x.pos + wt[j]

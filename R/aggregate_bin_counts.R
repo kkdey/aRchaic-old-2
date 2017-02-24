@@ -22,12 +22,7 @@
 aggregate_bin_counts <- function(dir,
                                  breaks = NULL,
                                  flanking_bases = 2){
-
-  leftflank_files <- list.files(dir, pattern="leftflank")
-  rightflank_files <- list.files(dir, pattern="rightflank")
-  ancient_files <- setdiff(list.files(dir), union(leftflank_files, rightflank_files))
-
-
+  ancient_files <- list.files(dir)
   signature_ancient <- vector(mode="list")
   signature_counts_ancient <- vector(mode="list")
 
@@ -59,7 +54,7 @@ aggregate_bin_counts <- function(dir,
 
   signature_split <- do.call(rbind, lapply(merged_signature_ancient, function(x) strsplit(as.character(x), split="")[[1]][1:(4+2*flanking_bases)]))
 
-  indices1 <- which(signature_split[,3]==signature_split[,6])
+  indices1 <- which(signature_split[,(flanking_bases+1)]==signature_split[,(flanking_bases+4)])
 
   indices2 <- numeric()
   for(m in 1:(4+2*flanking_bases)){
@@ -68,33 +63,18 @@ aggregate_bin_counts <- function(dir,
 
   indices <- union(indices1, indices2)
 
-  ancient_counts_filtered <- ancient_counts[,-indices]
+  if(length(indices) > 0) {
+    ancient_counts_filtered <- ancient_counts[,-indices]
+  }else{
+    ancient_counts_filtered <- ancient_counts
+  }
+
   rownames(ancient_counts_filtered) <- ancient_files_filt
-  colnames(ancient_counts_filtered) <- merged_signature_ancient[-indices]
-
-  message("Reading the left flanking bases")
-  left_flank <- numeric()
-  for(tmp in leftflank_files){
-    dat <- read.csv(paste0(dir, tmp), header = FALSE)
-    dat1 <- dat[match(c("A", "G", "C", "T"), dat[,1]),]
-    left_flank <- rbind(left_flank, t(dat1[,2]))
+  if(length(indices) > 0){
+    colnames(ancient_counts_filtered) <- merged_signature_ancient[-indices]
+  }else{
+    colnames(ancient_counts_filtered) <- merged_signature_ancient
   }
 
-  rownames(left_flank) <- ancient_files_filt
-  colnames(left_flank) <- paste0(c("A", "G", "C", "T"), "_", "left")
-
-
-  message("Reading the right flanking bases")
-  right_flank <- numeric()
-  for(tmp in rightflank_files){
-    dat <- read.csv(paste0(dir, tmp), header = FALSE)
-    dat1 <- dat[match(c("A", "G", "C", "T"), dat[,1]),]
-    right_flank <- rbind(right_flank, t(dat1[,2]))
-  }
-
-  rownames(right_flank) <- ancient_files_filt
-  colnames(right_flank) <- paste0(c("A", "G", "C", "T"), "_", "right")
-
-  pooled_data <- cbind(ancient_counts_filtered, left_flank, right_flank)
-  return(pooled_data)
+  return(ancient_counts_filtered)
 }

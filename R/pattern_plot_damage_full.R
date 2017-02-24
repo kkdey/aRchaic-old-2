@@ -35,11 +35,19 @@ pattern_plot_full <- function(file,
                          pattern,
                          plot_type=c("left", "right", "both"),
                          sample_name = NULL,
+                         strand = "both",
                          cols= c("black", "red", "green", "blue", "orange", "purple"),
                          legend_cex = 0.5)
 {
   data <- read.csv(file, header=FALSE)
   totsum <- sum(data[,3]);
+
+  if(strand == "+"){
+    data <- data[data[,6] == "+",]
+  }
+  if(strand =="_"){
+    data <- data[data[,6] == "-",]
+  }
 
   flag <- as.numeric();
 
@@ -47,16 +55,16 @@ pattern_plot_full <- function(file,
     if(length(grep(pattern[i], data[,1])) > 0){
     flag <- c(flag, i);
     pattern_data <- data[grep(pattern[i], data[,1]),]
-    pattern_data[,4] <- pattern_data[,4]/totsum;
+    pattern_data[,7] <- pattern_data[,7]/totsum;
     if(length(which(pattern_data[,3]==-1)) !=0){
     pattern_data[which(pattern_data[,3]==-1), 3] <- 0
     }
 
-    tab_pattern_left <- tapply(pattern_data[,4], pattern_data[,2], sum);
+    tab_pattern_left <- tapply(pattern_data[,7], pattern_data[,2], sum);
 
     lo_left <- loess(as.numeric(tab_pattern_left)~as.numeric(names(tab_pattern_left)))
 
-    tab_pattern_right <- tapply(pattern_data[,4], pattern_data[,3], sum);
+    tab_pattern_right <- tapply(pattern_data[,7], pattern_data[,3], sum);
 
     lo_right <- loess(as.numeric(tab_pattern_right)~as.numeric(names(tab_pattern_right)))
 
@@ -64,14 +72,18 @@ pattern_plot_full <- function(file,
 
     if(plot_type=="left"){
       if(is.null(sample_name)){
-        plot(predict(lo_left), col=cols[i], lwd=2, type="l",
+        temp <- predict(lo_left)
+        temp[temp < 0] =0
+        plot(temp, col=cols[i], lwd=2, type="l",
              ylab=paste0("predicted no. of damages: "),
              xlab="read positions (from left)",
              main=paste0("Damage plot across reads: ")
         )
       }
       if(!is.null(sample_name)){
-        plot(predict(lo_left), col=cols[i], lwd=2, type="l",
+        temp <- predict(lo_left)
+        temp[temp < 0] =0
+        plot(temp, col=cols[i], lwd=2, type="l",
              ylab=paste0("predicted no. of damages: "),
              xlab="read positions (from left)",
              main=paste0("Damage plot across reads: ", sample_name)
@@ -80,14 +92,18 @@ pattern_plot_full <- function(file,
 
     if(plot_type=="right"){
       if(is.null(sample_name)){
-        plot(predict(lo_right), col=cols[i], lwd=2, type="l",
+        temp <- predict(lo_right)
+        temp[temp < 0] =0
+        plot(temp, col=cols[i], lwd=2, type="l",
              ylab=paste0("predicted no. of damages: "),
              xlab="read positions (from right)",
              main=paste0("Damage plot across reads: "),
              xlim=rev(range(as.numeric(names(tab_pattern_right)))))
       }
       if(!is.null(sample_name)){
-        plot(predict(lo_right), col=cols[i], lwd=2, type="l",
+        temp <- predict(lo_right)
+        temp[temp < 0] =0
+        plot(temp, col=cols[i], lwd=2, type="l",
              ylab=paste0("predicted no. of damages: "),
              xlab="read positions (from right)",
              main=paste0("Damage plot across reads: ", sample_name),
@@ -99,11 +115,15 @@ pattern_plot_full <- function(file,
     if(plot_type=="both"){
       if(is.null(sample_name)){
         par(mfrow=c(1,2))
-        plot(predict(lo_left), col=cols[i], lwd=2, type="l",
+        temp <- predict(lo_left)
+        temp[temp < 0] =0
+        plot(temp, col=cols[i], lwd=2, type="l",
              ylab=paste0("predicted no. of damages: "),
              xlab="read positions (from left)",
              main=paste0("Damage plot across reads: ")
         )
+        temp <- predict(lo_right)
+        temp[temp < 0] =0
         plot(predict(lo_right), col=cols[i], lwd=2, type="l",
              ylab=paste0("predicted no. of damages: "),
              xlab="read positions (from right)",
@@ -112,12 +132,16 @@ pattern_plot_full <- function(file,
       }
       if(!is.null(sample_name)){
         par(mfrow=c(1,2))
-        plot(predict(lo_left), col=cols[i], lwd=2, type="l",
+        temp <- predict(lo_left)
+        temp[temp < 0] =0
+        plot(temp, col=cols[i], lwd=2, type="l",
              ylab=paste0("predicted no. of damages: "),
              xlab="read positions (from left)",
              main=paste0("Damage plot across reads: ", sample_name)
         )
-        plot(predict(lo_right), col=cols[i], lwd=2, type="l",
+        temp <- predict(lo_right)
+        temp[temp < 0] =0
+        plot(temp, col=cols[i], lwd=2, type="l",
              ylab=paste0("predicted no. of damages: "),
              xlab="read positions (from right)",
              main=paste0("Damage plot across reads: ", sample_name),
@@ -129,19 +153,27 @@ pattern_plot_full <- function(file,
 
       if(plot_type=="left"){
         if(is.null(sample_name)){
-          lines(predict(lo_left), col=cols[i], lwd=2)
+          temp <- predict(lo_left)
+          temp[temp < 0] =0
+          lines(temp, col=cols[i], lwd=2)
         }
         if(!is.null(sample_name)){
-          lines(predict(lo_left), col=cols[i], lwd=2)
+          temp <- predict(lo_left)
+          temp[temp < 0] =0
+          lines(temp, col=cols[i], lwd=2)
         }
       }
 
       if(plot_type=="right"){
         if(is.null(sample_name)){
-          lines(predict(lo_right), col=cols[i], lwd=2)
+          temp <- predict(lo_right)
+          temp[temp < 0] =0
+          lines(temp, col=cols[i], lwd=2)
         }
         if(!is.null(sample_name)){
-          lines(predict(lo_right), col=cols[i], lwd=2)
+          temp <- predict(lo_right)
+          temp[temp < 0] =0
+          lines(temp, col=cols[i], lwd=2)
         }
       }
 
@@ -150,12 +182,20 @@ pattern_plot_full <- function(file,
       if(plot_type=="both"){
         if(is.null(sample_name)){
           par(mfrow=c(1,2))
-          lines(predict(lo_left), col=cols[i], lwd=2)
-          lines(predict(lo_right), col=cols[i], lwd=2)
+          temp <- predict(lo_left)
+          temp[temp < 0] =0
+          lines(temp, col=cols[i], lwd=2)
+          temp <- predict(lo_right)
+          temp[temp < 0] =0
+          lines(temp, col=cols[i], lwd=2)
         }
         if(!is.null(sample_name)){
-          lines(predict(lo_left), col=cols[i], lwd=2)
-          lines(predict(lo_right), col=cols[i], lwd=2)
+          temp <- predict(lo_left)
+          temp[temp < 0] =0
+          lines(temp, col=cols[i], lwd=2)
+          temp <- predict(lo_right)
+          temp[temp < 0] =0
+          lines(temp, col=cols[i], lwd=2)
         }
       }
 

@@ -32,12 +32,13 @@ damage_build_bin_counts =  function(file,
 {
   file <-  read.csv(file=file, header=FALSE);
   file[which(file[,3]==-1), 3] <- 0
+  file[which(file[,2]==-1), 2] <- 0
 
   min_dist_from_end <- apply(file[,2:3], 1, function(x) return(min(x)))
 
 
   if(is.null(breaks)){
-    bins <- c(-1, 5, 10, 15, 20, 30, 40, max(min_dist_from_end))
+    bins <- c(-1, 5, 10, 15, 20, max(min_dist_from_end))
   }else{
     message("breaks values provided : adjusting")
     bins <- c(intersect(breaks, (-1):max(min_dist_from_end)),max(min_dist_from_end))
@@ -45,16 +46,16 @@ damage_build_bin_counts =  function(file,
 
   bin_values <- .bincode(min_dist_from_end, bins, TRUE)
 
-  modified_file <- cbind.data.frame(file[,1], file[,4], file[,5], bin_values)
-  colnames(modified_file) <- c("pattern", "strand", "counts", "bin_values")
+  modified_file <- cbind.data.frame(file[,1], file[,4], file[,5], file[,6], file[,7], bin_values)
+  colnames(modified_file) <- c("pattern", "base.lsb", "base.rsb", "strand", "counts", "bin_values")
 
   library(plyr)
-  df1 <- plyr::ddply(modified_file, .(pattern, strand, bin_values), summarise, newvar = sum(counts))
-  colnames(df1) <- c("pattern", "strand", "bin", "counts")
+  df1 <- plyr::ddply(modified_file, .(pattern, strand, base.lsb, base.rsb, strand, bin_values), plyr::summarise, newvar = sum(counts))
+  colnames(df1) <- c("pattern", "strand", "base.lsb", "base.rsb", "bin", "counts")
 
   if(type==2){
-    df2 <- cbind.data.frame(paste0(df1[,1], "_", df1[,2], "_", df1[,3]), df1[,4])
-    colnames(df2) <- c("pattern-strand-bin", "counts")
+    df2 <- cbind.data.frame(paste0(df1[,1], "_", df1[,2], "_", df1[,3], "_", df1[,4], "_", df1[,5]), df1[,6])
+    colnames(df2) <- c("pattern-strand-breaks-bin", "counts")
     out <- df2
   }else{
     out <- df1
