@@ -13,6 +13,7 @@
 #' @param flanking_bases The number of flanking bases of the mutational signature.
 #' @param yscale_change A binary variable indicating whether the Y axis scale should be adjusted based on the size of the
 #'        logos, defaults to TRUE.
+#' @param xlab The labels for X axis.
 #' @param xaxis A binary indicating whether the X axis of the logo plot should be shown
 #' @param yaxis A binary indicating whether the Y axis of the logo plot should be shown
 #' @param xaxis_fontsize The fontsize of the X axis ticks.
@@ -49,6 +50,7 @@ damageLogo_five <- function(theta_pool,
                             yscale_change = TRUE,
                             xaxis=TRUE,
                             yaxis=TRUE,
+                            xlab = " ",
                             xaxis_fontsize=5,
                             xlab_fontsize=10,
                             y_fontsize=10,
@@ -56,23 +58,28 @@ damageLogo_five <- function(theta_pool,
                             start=0.0001,
                             renyi_alpha = 1,
                             pop_names=paste0("Cluster ",1:dim(theta_pool)[2]),
-                            logoport_x = 0.24,
+                            logoport_x = 0.28,
                             logoport_y= 0.50,
                             logoport_width= 0.30,
                             logoport_height= 0.40,
-                            lineport_x = 0.60,
-                            lineport_y=0.30,
-                            lineport_width=0.20,
+                            lineport_x = 0.72,
+                            lineport_y=0.34,
+                            lineport_width=0.25,
                             lineport_height=0.25,
-                            breaklogoport_x = 0.90,
+                            breaklogoport_x = 1.00,
                             breaklogoport_y = 0.40,
-                            breaklogoport_width=0.30,
+                            breaklogoport_width=0.40,
                             breaklogoport_height=0.50,
-                            barport_x = 0.58,
-                            barport_y=0.65,
-                            barport_width=0.25,
+                            barport_x = 0.60,
+                            barport_y=0.60,
+                            barport_width=0.30,
                             barport_height=0.25){
-
+  flag <- 0
+  if(dim(theta_pool)[2] == 1){
+    flag = 1
+    theta_pool <- cbind(theta_pool, theta_pool)
+    colnames(theta_pool) <- c("sample1", "sample2")
+  }
   signature_set <- rownames(theta_pool)
   signature_patterns <- substring(signature_set, 1, 4+2*flanking_bases)
   library(dplyr)
@@ -84,6 +91,11 @@ damageLogo_five <- function(theta_pool,
   strand_theta <- data.frame("minus" = colSums(theta_pool[indices_minus,]),
                              "plus" = colSums(theta_pool[-indices_minus,]))
 
+  if(flag == 1){
+    strand_theta <- data.frame("minus" = colSums(matrix(theta_pool[indices_minus,])),
+                               "plus" = colSums(matrix(theta_pool[-indices_minus,])))
+    strand_theta <- strand_theta/2;
+  }
   breakbase <- substring(signature_set, 8+2*flanking_bases,  8+2*flanking_bases)
 
   theta_break <- dplyr::tbl_df(data.frame(theta_pool)) %>% dplyr::mutate(sig = breakbase) %>% dplyr::group_by(sig) %>% dplyr::summarise_each(funs(sum)) %>% as.data.frame()
@@ -138,7 +150,8 @@ damageLogo_five <- function(theta_pool,
   ic <- damage.ic(prop_patterns_list, alpha=renyi_alpha)
 
   grob_list <- list()
-  for(l in 1:length(prop_patterns_list)){
+  if(flag == 1){
+    l = 1
     damageLogo.pos.str.skeleton(pwm = prop_patterns_list[[l]],
                                 probs = prob_mutation[l,],
                                 breaks_theta_vec = breaks_theta[,l, drop=FALSE],
@@ -148,6 +161,7 @@ damageLogo_five <- function(theta_pool,
                                 max_prob = max_prob,
                                 ic.scale = ic.scale,
                                 yscale_change = yscale_change,
+                                xlab = xlab,
                                 xaxis=xaxis,
                                 yaxis=yaxis,
                                 xaxis_fontsize=xaxis_fontsize,
@@ -172,7 +186,43 @@ damageLogo_five <- function(theta_pool,
                                 barport_y = barport_y,
                                 barport_width = barport_width,
                                 barport_height = barport_height)
-
+  } else {
+    for(l in 1:length(prop_patterns_list)){
+      damageLogo.pos.str.skeleton(pwm = prop_patterns_list[[l]],
+                                  probs = prob_mutation[l,],
+                                  breaks_theta_vec = breaks_theta[,l, drop=FALSE],
+                                  strand_theta_vec = strand_theta[l,],
+                                  ic = ic[,l],
+                                  max_pos = max_pos,
+                                  max_prob = max_prob,
+                                  ic.scale = ic.scale,
+                                  yscale_change = yscale_change,
+                                  xlab = xlab,
+                                  xaxis=xaxis,
+                                  yaxis=yaxis,
+                                  xaxis_fontsize=xaxis_fontsize,
+                                  xlab_fontsize=xlab_fontsize,
+                                  y_fontsize=y_fontsize,
+                                  mut_width=mut_width,
+                                  start=start,
+                                  pop_name = pop_names[l],
+                                  logoport_x = logoport_x,
+                                  logoport_y= logoport_y,
+                                  logoport_width= logoport_width,
+                                  logoport_height= logoport_height,
+                                  lineport_x = lineport_x,
+                                  lineport_y= lineport_y,
+                                  lineport_width=lineport_width,
+                                  lineport_height=lineport_height,
+                                  breaklogoport_x = breaklogoport_x,
+                                  breaklogoport_y = breaklogoport_y,
+                                  breaklogoport_width=breaklogoport_width,
+                                  breaklogoport_height=breaklogoport_height,
+                                  barport_x = barport_x,
+                                  barport_y = barport_y,
+                                  barport_width = barport_width,
+                                  barport_height = barport_height)
+    }
   }
 }
 
@@ -184,6 +234,7 @@ damageLogo.pos.str.skeleton <- function(pwm,
                                         max_pos,
                                         max_prob,
                                         ic.scale=TRUE,
+                                        xlab = "",
                                         xaxis=TRUE,
                                         yaxis=TRUE,
                                         xaxis_fontsize=10,
@@ -313,7 +364,7 @@ damageLogo.pos.str.skeleton <- function(pwm,
     grid.text("Logo plot", y = unit(1, "npc") + unit(1.5, "lines"),
               gp = gpar(fontsize = 16))
   }else{
-    grid.text(paste0(pop_name), x = unit(1.3, "npc"), y = unit(12, "lines"),
+    grid.text(paste0(pop_name), x = unit(1.3, "npc"), y = unit(8, "lines"),
               gp = gpar(fontsize = 20, col="black"))
   }
 
@@ -324,7 +375,7 @@ damageLogo.pos.str.skeleton <- function(pwm,
                         paste0("\n right \n flank \n", -flanked_coord[(1:floor(npos/2))])
                )),
                gp=gpar(fontsize=xaxis_fontsize))
-    grid.text("Position",y=unit(-3,"lines"),
+    grid.text(paste0(xlab),y=unit(-3,"lines"),
               gp=gpar(fontsize=xlab_fontsize))
   }
   if (yaxis){
@@ -335,7 +386,7 @@ damageLogo.pos.str.skeleton <- function(pwm,
     }else{
       grid.yaxis(gp=gpar(fontsize=y_fontsize))
     }
-    grid.text(ylab,x=unit(-3,"lines"),rot=90,
+    grid.text(ylab,x=unit(-4,"lines"),rot=90,
               gp=gpar(fontsize=y_fontsize))
   }
 
@@ -368,15 +419,18 @@ damageLogo.pos.str.skeleton <- function(pwm,
 plot_bar <- function(strand_theta_vec){
   df <- data.frame("value" = as.numeric(t(strand_theta_vec)), "strand"=plyr::revalue(factor(names(strand_theta_vec)), c("plus" = "+",  "minus" = "-")))
   ggplot(df, aes(x=strand, y=value, fill=c("green", "lightpink")))  +
-    geom_bar(stat='identity', width=0.8, position = position_dodge(width=0.9), colour = 'black') +
-    xlab("") + ylim(0,1) + ylab("") + theme(legend.position="none") +
+    geom_bar(stat='identity', width=0.8, position = position_dodge(width=0.3), colour = 'black') +
+    xlab("") + ylim(0,1) + ylab("") + theme(legend.position="none",
+                                            axis.ticks = element_blank(),
+                                            axis.text = element_blank(),
+                                            panel.background = element_rect(fill = "white"),
+                                            panel.border = element_rect(colour = "white")) +
     #  geom_text(aes(x=strand, y=value+0.1, label=value)) +
-    geom_text(aes(x=strand, y=value*0.5, label=as.character(strand)), colour="black", size=5)+
-    theme(axis.text = element_blank(),
-          axis.ticks = element_blank(),
-          panel.grid  = element_blank(),
-          panel.border = element_rect(colour = "white")) +
-    coord_flip()
+    geom_text(aes(x=strand, y=value*0.5, label=as.character(strand)), colour="black", size=5) + coord_flip()
+    # theme(axis.text = element_blank(),
+    #       axis.ticks = element_blank(),
+    #       panel.grid  = element_blank(),
+    #       panel.border = element_rect(colour = "white")) +
 }
 
 plot_logo <- function(breaks_theta_vec){
@@ -389,18 +443,767 @@ plot_logo <- function(breaks_theta_vec){
   rownames(mat) <- c("A", "C", "G", "T")
   colnames(mat) <- c("purine", "pyrimidine")
 
+  cols = RColorBrewer::brewer.pal.info[RColorBrewer::brewer.pal.info$category == 'qual',]
+  col_vector = unlist(mapply(RColorBrewer::brewer.pal, cols$maxcolors, rownames(cols)))
+
+  color_profile <- list("type" = "per_column",
+                        "col" = c("blue", "red"))
+
   logomaker(mat,
+            color_profile = color_profile,
             hist=TRUE,
             frame_width = 1,
-            cols= c("blue", "red"),
             ic.scale = TRUE,
             yscale_change = TRUE,
             pop_name = "5' strand break",
             xlab = "",
             ylab = "",
             yaxis=FALSE,
-            main_fontsize = 10,
-            cols_per_column = TRUE,
-            col_line_split="black")
+            main_fontsize = 15,
+            xaxis_fontsize = 15,
+            col_line_split="black",
+            newpage=FALSE)
 }
+
+pwm2ic<-function(pwm) {
+  npos<-ncol(pwm)
+  ic<-numeric(length=npos)
+  for (i in 1:npos) {
+    ic[i]<- log(length(which(pwm[,i]!=0.00)), base=2) + sum(sapply(pwm[, i], function(x) {
+      if (x > 0) { x*log2(x) } else { 0 }
+    }))
+  }
+  ic
+}
+
+ic_computer_2 <-function(mat, alpha) {
+  mat <- apply(mat, 2, function(x) return(x/sum(x)))
+  npos<-ncol(mat)
+  ic <-numeric(length=npos)
+  for (i in 1:npos) {
+    if(alpha == 1){
+      ic[i] <- log(length(which(mat[,i]!=0.00)), base=2) + sum(sapply(mat[, i], function(x) {
+        if (x > 0) { x*log2(x) } else { 0 }
+      }))
+    }
+    else if(alpha == Inf){
+      ic[i] <- log(length(which(mat[,i]!=0.00)), base=2) + log(max(mat[,i]))
+    }
+    else if(alpha <= 0){
+      stop("alpha value must be greater than 0")
+    }
+    else{
+      ic[i] <- log(length(which(mat[,i]!=0.00)), base=2) - (1/(1-alpha))* log (sum(mat[,i]^{alpha}), base=2)
+    }
+  }
+  return(ic)
+}
+
+
+damage.ic<-function(pwm, alpha=1) {
+  npos<-ncol(pwm[[1]])
+  ic<- matrix(0, npos, length(pwm))
+
+  for(i in 1:npos){
+    mat <- numeric()
+    for(j in 1:length(pwm)){
+      mat <- cbind(mat, pwm[[j]][,i])
+    }
+    mat_clean <- mat[rowSums(mat) != 0,]
+    ic[i,] <- ic_computer_2(mat_clean, alpha)
+  }
+
+  return(ic)
+}
+
+
+###########   skeleton damage logo    ###################
+
+
+
+###################################################################
+#####################  Damage Logos  ##############################
+###################################################################
+
+
+
+###################  letter  A   #################################
+
+
+letterA <- function(x.pos,y.pos,ht,wt,id=NULL){
+
+  x <- c(0,4,6,10,8,6.8,3.2,2,0,3.6,5,6.4,3.6)
+  y <- c(0,10,10,0,0,3,3,0,0,4,7.5,4,4)
+  x <- 0.1*x
+  y <- 0.1*y
+
+  x <- x.pos + wt*x
+  y <- y.pos + ht*y
+
+  if (is.null(id)){
+    id <- c(rep(1,9),rep(2,4))
+  }else{
+    id <- c(rep(id,9),rep(id+1,4))
+  }
+
+  fill <- c("green","white")
+
+  list(x=x,y=y,id=id,fill=fill)
+}
+
+#grid.newpage()
+
+#grid.polygon(x=a_let$x, y=a_let$y, gp=gpar(fill=a_let$fill,
+#             col="transparent"))
+
+################   letter  T   ##################################
+
+letterT <- function(x.pos,y.pos,ht,wt,id=NULL){
+
+  x <- c(0,10,10,6,6,4,4,0)
+  y <- c(10,10,9,9,0,0,9,9)
+  x <- 0.1*x
+  y <- 0.1*y
+
+  x <- x.pos + wt*x
+  y <- y.pos + ht*y
+
+  if (is.null(id)){
+    id <- rep(1,8)
+  }else{
+    id <- rep(id,8)
+  }
+
+  fill <- "red"
+
+  list(x=x,y=y,id=id,fill=fill)
+}
+
+#################### letter  C #####################################
+
+letterC <- function(x.pos,y.pos,ht,wt,id=NULL){
+  angle1 <- seq(0.3+pi/2,pi,length=100)
+  angle2 <- seq(pi,1.5*pi,length=100)
+  x.l1 <- 0.5 + 0.5*sin(angle1)
+  y.l1 <- 0.5 + 0.5*cos(angle1)
+  x.l2 <- 0.5 + 0.5*sin(angle2)
+  y.l2 <- 0.5 + 0.5*cos(angle2)
+
+  x.l <- c(x.l1,x.l2)
+  y.l <- c(y.l1,y.l2)
+
+  x <- c(x.l,rev(x.l))
+  y <- c(y.l,1-rev(y.l))
+
+  x.i1 <- 0.5 +0.35*sin(angle1)
+  y.i1 <- 0.5 +0.35*cos(angle1)
+  x.i1 <- x.i1[y.i1<=max(y.l1)]
+  y.i1 <- y.i1[y.i1<=max(y.l1)]
+  y.i1[1] <- max(y.l1)
+
+  x.i2 <- 0.5 +0.35*sin(angle2)
+  y.i2 <- 0.5 +0.35*cos(angle2)
+
+  x.i <- c(x.i1,x.i2)
+  y.i <- c(y.i1,y.i2)
+
+  x1 <- c(x.i,rev(x.i))
+  y1 <- c(y.i,1-rev(y.i))
+
+  x <- c(x,rev(x1))
+  y <- c(y,rev(y1))
+
+  x <- x.pos + wt*x
+  y <- y.pos + ht*y
+
+  if (is.null(id)){
+    id <- rep(1,length(x))
+  }else{
+    id <- rep(id,length(x))
+  }
+
+  fill <- "blue"
+
+  list(x=x,y=y,id=id,fill=fill)
+}
+
+
+##################  letter G  ######################################
+
+letterG <- function(x.pos,y.pos,ht,wt,id=NULL){
+  angle1 <- seq(0.3+pi/2,pi,length=100)
+  angle2 <- seq(pi,1.5*pi,length=100)
+  x.l1 <- 0.5 + 0.5*sin(angle1)
+  y.l1 <- 0.5 + 0.5*cos(angle1)
+  x.l2 <- 0.5 + 0.5*sin(angle2)
+  y.l2 <- 0.5 + 0.5*cos(angle2)
+
+  x.l <- c(x.l1,x.l2)
+  y.l <- c(y.l1,y.l2)
+
+  x <- c(x.l,rev(x.l))
+  y <- c(y.l,1-rev(y.l))
+
+  x.i1 <- 0.5 +0.35*sin(angle1)
+  y.i1 <- 0.5 +0.35*cos(angle1)
+  x.i1 <- x.i1[y.i1<=max(y.l1)]
+  y.i1 <- y.i1[y.i1<=max(y.l1)]
+  y.i1[1] <- max(y.l1)
+
+  x.i2 <- 0.5 +0.35*sin(angle2)
+  y.i2 <- 0.5 +0.35*cos(angle2)
+
+  x.i <- c(x.i1,x.i2)
+  y.i <- c(y.i1,y.i2)
+
+  x1 <- c(x.i,rev(x.i))
+  y1 <- c(y.i,1-rev(y.i))
+
+  x <- c(x,rev(x1))
+  y <- c(y,rev(y1))
+
+  h1 <- max(y.l1)
+  r1 <- max(x.l1)
+
+  h1 <- 0.4
+  x.add <- c(r1,0.5,0.5,r1-0.2,r1-0.2,r1,r1)
+  y.add <- c(h1,h1,h1-0.1,h1-0.1,0,0,h1)
+
+
+
+  if (is.null(id)){
+    id <- c(rep(1,length(x)),rep(2,length(x.add)))
+  }else{
+    id <- c(rep(id,length(x)),rep(id+1,length(x.add)))
+  }
+
+  x <- c(rev(x),x.add)
+  y <- c(rev(y),y.add)
+
+  x <- x.pos + wt*x
+  y <- y.pos + ht*y
+
+
+  fill <- c("orange","orange")
+
+  list(x=x,y=y,id=id,fill=fill)
+
+}
+
+letterX <- function(x.pos,y.pos,ht,wt,id=NULL){
+
+  x <- c( 0, 0.4, 0, 0.2, 0.5, 0.8, 1, 0.6, 1, 0.8, 0.5, 0.2)
+  x <- 0.05 + 0.90*x
+  y <- c( 0, 0.5, 1, 1, 0.6, 1, 1, 0.5, 0, 0, 0.4, 0)
+
+  if (is.null(id)){
+    id <- rep(1,length(x))
+  }else{
+    id <- rep(id,length(x))
+  }
+
+  fill <- "pink"
+
+  x <- x.pos + wt*x
+  y <- y.pos + ht*y
+
+
+  ll <- list("x"= x,
+             "y"= y,
+             "id" = id,
+             "fill" = fill)
+  return(ll)
+}
+
+
+
+
+
+################  letter C to T  ###############################
+
+letter_C_to_T <- function(x.pos,y.pos,ht,wt,id=NULL){
+
+  angle1 <- seq(0.3+pi/2,pi,length=100)
+  angle2 <- seq(pi,1.5*pi,length=100)
+  x.l1 <- 0.5 + 0.5*sin(angle1)
+  y.l1 <- 0.5 + 0.5*cos(angle1)
+  x.l2 <- 0.5 + 0.5*sin(angle2)
+  y.l2 <- 0.5 + 0.5*cos(angle2)
+
+  x.l <- c(x.l1,x.l2)
+  y.l <- c(y.l1,y.l2)
+
+  x <- c(x.l,rev(x.l))
+  y <- c(y.l,1-rev(y.l))
+
+  x.i1 <- 0.5 +0.35*sin(angle1)
+  y.i1 <- 0.5 +0.35*cos(angle1)
+  x.i1 <- x.i1[y.i1<=max(y.l1)]
+  y.i1 <- y.i1[y.i1<=max(y.l1)]
+  y.i1[1] <- max(y.l1)
+
+  x.i2 <- 0.5 +0.35*sin(angle2)
+  y.i2 <- 0.5 +0.35*cos(angle2)
+
+  x.i <- c(x.i1,x.i2)
+  y.i <- c(y.i1,y.i2)
+
+  x1 <- c(x.i,rev(x.i))
+  y1 <- c(y.i,1-rev(y.i))
+
+  x <- c(x,rev(x1))
+  y <- c(y,rev(y1))
+  x1 <- 0.4*x
+  y1 <- 1*y
+
+
+  x <- c( 0.4, 0.4, 0, 0, 1, 1, 0.6, 0.6)
+  y <- c( 0, 0.85, 0.85, 1, 1, 0.85, 0.85, 0)
+  x2 <- 0.6 + 0.4*x
+  y2 <- 1*y
+
+
+  x3 <- c(0.42, 0.42, 0.55, 0.55, 0.60, 0.55, 0.55)
+  y3 <- c(0.45, 0.55, 0.55, 0.60, 0.50, 0.40, 0.45)
+
+  xpool <- c(x1, x2, x3)
+  ypool <- c(y1, y2, y3)
+
+  if(!is.null(id)){
+    id_pool <- id + c(rep(1,length(x1)), rep(3, length(x2)),
+                      rep(4, length(x3)))
+  }else{
+    id_pool <- c(rep(1,length(x1)), rep(3, length(x2)),
+                 rep(4, length(x3)))
+  }
+
+  x <- x.pos + wt*xpool
+  y <- y.pos + ht*ypool
+
+  fill=c("blue","red","grey80")
+
+  list(x=x,y=y,id=id_pool,fill=fill)
+
+}
+
+###############  letter C to G  ###################################
+
+letter_C_to_G <- function(x.pos,y.pos,ht,wt,id=NULL){
+
+  angle1 <- seq(0.3+pi/2,pi,length=100)
+  angle2 <- seq(pi,1.5*pi,length=100)
+  x.l1 <- 0.5 + 0.5*sin(angle1)
+  y.l1 <- 0.5 + 0.5*cos(angle1)
+  x.l2 <- 0.5 + 0.5*sin(angle2)
+  y.l2 <- 0.5 + 0.5*cos(angle2)
+
+  x.l <- c(x.l1,x.l2)
+  y.l <- c(y.l1,y.l2)
+
+  x <- c(x.l,rev(x.l))
+  y <- c(y.l,1-rev(y.l))
+
+  x.i1 <- 0.5 +0.35*sin(angle1)
+  y.i1 <- 0.5 +0.35*cos(angle1)
+  x.i1 <- x.i1[y.i1<=max(y.l1)]
+  y.i1 <- y.i1[y.i1<=max(y.l1)]
+  y.i1[1] <- max(y.l1)
+
+  x.i2 <- 0.5 +0.35*sin(angle2)
+  y.i2 <- 0.5 +0.35*cos(angle2)
+
+  x.i <- c(x.i1,x.i2)
+  y.i <- c(y.i1,y.i2)
+
+  x1 <- c(x.i,rev(x.i))
+  y1 <- c(y.i,1-rev(y.i))
+
+  x <- c(x,rev(x1))
+  y <- c(y,rev(y1))
+  x1_pool <- 0.4*x
+  y1_pool <- 1*y
+
+  id1_pool <- rep(1,length(x1_pool))
+
+
+
+  angle1 <- seq(0.3+pi/2,pi,length=100)
+  angle2 <- seq(pi,1.5*pi,length=100)
+  x.l1 <- 0.5 + 0.5*sin(angle1)
+  y.l1 <- 0.5 + 0.5*cos(angle1)
+  x.l2 <- 0.5 + 0.5*sin(angle2)
+  y.l2 <- 0.5 + 0.5*cos(angle2)
+
+  x.l <- c(x.l1,x.l2)
+  y.l <- c(y.l1,y.l2)
+
+  x <- c(x.l,rev(x.l))
+  y <- c(y.l,1-rev(y.l))
+
+  x.i1 <- 0.5 +0.35*sin(angle1)
+  y.i1 <- 0.5 +0.35*cos(angle1)
+  x.i1 <- x.i1[y.i1<=max(y.l1)]
+  y.i1 <- y.i1[y.i1<=max(y.l1)]
+  y.i1[1] <- max(y.l1)
+
+  x.i2 <- 0.5 +0.35*sin(angle2)
+  y.i2 <- 0.5 +0.35*cos(angle2)
+
+  x.i <- c(x.i1,x.i2)
+  y.i <- c(y.i1,y.i2)
+
+  x1 <- c(x.i,rev(x.i))
+  y1 <- c(y.i,1-rev(y.i))
+
+  x <- c(x,rev(x1))
+  y <- c(y,rev(y1))
+
+  h1 <- max(y.l1)
+  r1 <- max(x.l1)
+
+  h1 <- 0.4
+  x.add <- c(r1,0.5,0.5,r1-0.2,r1-0.2,r1,r1)
+  y.add <- c(h1,h1,h1-0.1,h1-0.1,0,0,h1)
+
+
+
+  id2_pool <- c(rep(2,length(x)),rep(3,length(x.add)))
+
+
+  x2_pool <- 0.6 + 0.4*c(rev(x),x.add)
+  y2_pool <- c(rev(y),y.add)
+
+
+  x3_pool <- c(0.42, 0.42, 0.55, 0.55, 0.60, 0.55, 0.55)
+  y3_pool <- c(0.45, 0.55, 0.55, 0.60, 0.50, 0.40, 0.45)
+
+  xpool <- c(x1_pool, x2_pool, x3_pool)
+  ypool <- c(y1_pool, y2_pool, y3_pool)
+
+  if(!is.null(id)){
+    id_pool <- id + c(id1_pool, id2_pool, rep(4, length(x3_pool)))
+  }else{
+    id_pool <- c(id1_pool, id2_pool, rep(4, length(x3_pool)))
+  }
+
+  x <- x.pos + wt*xpool
+  y <- y.pos + ht*ypool
+
+  fill <- c("blue","orange", "orange", "grey80")
+
+  list(x=x,y=y,id=id_pool,fill=fill)
+}
+
+##############  letter C to A  ####################################
+
+letter_C_to_A <- function(x.pos,y.pos,ht,wt,id=NULL){
+
+  angle1 <- seq(0.3+pi/2,pi,length=100)
+  angle2 <- seq(pi,1.5*pi,length=100)
+  x.l1 <- 0.5 + 0.5*sin(angle1)
+  y.l1 <- 0.5 + 0.5*cos(angle1)
+  x.l2 <- 0.5 + 0.5*sin(angle2)
+  y.l2 <- 0.5 + 0.5*cos(angle2)
+
+  x.l <- c(x.l1,x.l2)
+  y.l <- c(y.l1,y.l2)
+
+  x <- c(x.l,rev(x.l))
+  y <- c(y.l,1-rev(y.l))
+
+  x.i1 <- 0.5 +0.35*sin(angle1)
+  y.i1 <- 0.5 +0.35*cos(angle1)
+  x.i1 <- x.i1[y.i1<=max(y.l1)]
+  y.i1 <- y.i1[y.i1<=max(y.l1)]
+  y.i1[1] <- max(y.l1)
+
+  x.i2 <- 0.5 +0.35*sin(angle2)
+  y.i2 <- 0.5 +0.35*cos(angle2)
+
+  x.i <- c(x.i1,x.i2)
+  y.i <- c(y.i1,y.i2)
+
+  x1 <- c(x.i,rev(x.i))
+  y1 <- c(y.i,1-rev(y.i))
+
+  x <- c(x,rev(x1))
+  y <- c(y,rev(y1))
+  x1 <- 0.4*x
+  y1 <- 1*y
+
+
+  x <- 0.1* (c(0,4,6,10,8,6.8,3.2,2,0,3.6,5,6.4,3.6))
+  y <- 0.1*(c(0,10,10,0,0,3,3,0,0,4,7.5,4,4))
+  x2 <- 0.6 + 0.4*x
+  y2 <- 1*y
+
+  x3 <- c(0.42, 0.42, 0.55, 0.55, 0.60, 0.55, 0.55)
+  y3 <- c(0.45, 0.55, 0.55, 0.60, 0.50, 0.40, 0.45)
+
+  xpool <- c(x1, x2, x3)
+  ypool <- c(y1, y2, y3)
+
+  if(!is.null(id)){
+    id_pool <- id +  c(rep(1,length(x1)), c(rep(2,9),rep(3,4)),
+                       rep(4, length(x3)))
+  }else{
+    id_pool <- c(rep(1,length(x1)), c(rep(2,9),rep(3,4)),
+                 rep(4, length(x3)))
+  }
+
+  x <- x.pos + wt*xpool
+  y <- y.pos + ht*ypool
+
+  fill=c("blue","green", "white", "grey80")
+
+  list(x=x,y=y,id=id_pool,fill=fill)
+}
+
+################  letter T to G  ################################
+
+
+letter_T_to_G <- function(x.pos,y.pos,ht,wt,id=NULL){
+
+  x <- c( 0.4, 0.4, 0, 0, 1, 1, 0.6, 0.6)
+  y <- c( 0, 0.85, 0.85, 1, 1, 0.85, 0.85, 0)
+  x1_pool <- 0.4*x
+  y1_pool <- 1*y
+  id1_pool <- rep(1,length(x1_pool))
+
+
+  x3_pool <- c(0.42, 0.42, 0.55, 0.55, 0.60, 0.55, 0.55)
+  y3_pool <- c(0.45, 0.55, 0.55, 0.60, 0.50, 0.40, 0.45)
+
+
+  angle1 <- seq(0.3+pi/2,pi,length=100)
+  angle2 <- seq(pi,1.5*pi,length=100)
+  x.l1 <- 0.5 + 0.5*sin(angle1)
+  y.l1 <- 0.5 + 0.5*cos(angle1)
+  x.l2 <- 0.5 + 0.5*sin(angle2)
+  y.l2 <- 0.5 + 0.5*cos(angle2)
+
+  x.l <- c(x.l1,x.l2)
+  y.l <- c(y.l1,y.l2)
+
+  x <- c(x.l,rev(x.l))
+  y <- c(y.l,1-rev(y.l))
+
+  x.i1 <- 0.5 +0.35*sin(angle1)
+  y.i1 <- 0.5 +0.35*cos(angle1)
+  x.i1 <- x.i1[y.i1<=max(y.l1)]
+  y.i1 <- y.i1[y.i1<=max(y.l1)]
+  y.i1[1] <- max(y.l1)
+
+  x.i2 <- 0.5 +0.35*sin(angle2)
+  y.i2 <- 0.5 +0.35*cos(angle2)
+
+  x.i <- c(x.i1,x.i2)
+  y.i <- c(y.i1,y.i2)
+
+  x1 <- c(x.i,rev(x.i))
+  y1 <- c(y.i,1-rev(y.i))
+
+  x <- c(x,rev(x1))
+  y <- c(y,rev(y1))
+
+  h1 <- max(y.l1)
+  r1 <- max(x.l1)
+
+  h1 <- 0.4
+  x.add <- c(r1,0.5,0.5,r1-0.2,r1-0.2,r1,r1)
+  y.add <- c(h1,h1,h1-0.1,h1-0.1,0,0,h1)
+
+
+
+  id2_pool <- c(rep(2,length(x)),rep(3,length(x.add)))
+
+
+  x2_pool <- 0.6 + 0.4*c(rev(x),x.add)
+  y2_pool <- c(rev(y),y.add)
+
+  if(!is.null(id)){
+    id_pool <- id + c(id1_pool, id2_pool, rep(4, length(x3_pool)))
+  }else{
+    id_pool <- c(id1_pool, id2_pool, rep(4, length(x3_pool)))
+  }
+
+  xpool <- c(x1_pool, x2_pool, x3_pool)
+  ypool <- c(y1_pool, y2_pool, y3_pool)
+
+  x <- x.pos + wt*xpool
+  y <- y.pos + ht*ypool
+
+  fill=c("red","orange","orange", "grey80")
+
+  list(x=x,y=y,id=id_pool,fill=fill)
+}
+
+################ letter  T to C  ################################
+
+letter_T_to_C <- function(x.pos,y.pos,ht,wt,id=NULL){
+
+  angle1 <- seq(0.3+pi/2,pi,length=100)
+  angle2 <- seq(pi,1.5*pi,length=100)
+  x.l1 <- 0.5 + 0.5*sin(angle1)
+  y.l1 <- 0.5 + 0.5*cos(angle1)
+  x.l2 <- 0.5 + 0.5*sin(angle2)
+  y.l2 <- 0.5 + 0.5*cos(angle2)
+
+  x.l <- c(x.l1,x.l2)
+  y.l <- c(y.l1,y.l2)
+
+  x <- c(x.l,rev(x.l))
+  y <- c(y.l,1-rev(y.l))
+
+  x.i1 <- 0.5 +0.35*sin(angle1)
+  y.i1 <- 0.5 +0.35*cos(angle1)
+  x.i1 <- x.i1[y.i1<=max(y.l1)]
+  y.i1 <- y.i1[y.i1<=max(y.l1)]
+  y.i1[1] <- max(y.l1)
+
+  x.i2 <- 0.5 +0.35*sin(angle2)
+  y.i2 <- 0.5 +0.35*cos(angle2)
+
+  x.i <- c(x.i1,x.i2)
+  y.i <- c(y.i1,y.i2)
+
+  x1 <- c(x.i,rev(x.i))
+  y1 <- c(y.i,1-rev(y.i))
+
+  x <- c(x,rev(x1))
+  y <- c(y,rev(y1))
+  x2 <- 0.6 + 0.4*x
+  y2 <- 1*y
+
+
+  x <- c( 0.4, 0.4, 0, 0, 1, 1, 0.6, 0.6)
+  y <- c( 0, 0.85, 0.85, 1, 1, 0.85, 0.85, 0)
+  x1 <- 0.4*x
+  y1 <- 1*y
+
+
+  x3 <- c(0.42, 0.42, 0.55, 0.55, 0.60, 0.55, 0.55)
+  y3 <- c(0.45, 0.55, 0.55, 0.60, 0.50, 0.40, 0.45)
+
+  xpool <- c(x1, x2, x3)
+  ypool <- c(y1, y2, y3)
+
+  if(!is.null(id)){
+    id_pool <- id +c(rep(1,length(x1)), rep(3, length(x2)),
+                     rep(4, length(x3)))
+  }else{
+    id_pool <- c(rep(1,length(x1)), rep(3, length(x2)),
+                 rep(4, length(x3)))
+  }
+
+  x <- x.pos + wt*xpool
+  y <- y.pos + ht*ypool
+
+  fill=c("red","blue","grey80")
+
+  list(x=x,y=y,id=id_pool,fill=fill)
+
+}
+
+#################  letter T to A  ####################################
+
+letter_T_to_A <- function(x.pos,y.pos,ht,wt,id=NULL){
+  x <- c( 0.4, 0.4, 0, 0, 1, 1, 0.6, 0.6)
+  y <- c( 0, 0.85, 0.85, 1, 1, 0.85, 0.85, 0)
+  x1 <- 0.4*x
+  y1 <- 1*y
+
+
+  x <- 0.1* (c(0,4,6,10,8,6.8,3.2,2,0,3.6,5,6.4,3.6))
+  y <- 0.1*(c(0,10,10,0,0,3,3,0,0,4,7.5,4,4))
+  x2 <- 0.6 + 0.4*x
+  y2 <- 1*y
+
+
+  x3 <- c(0.42, 0.42, 0.55, 0.55, 0.60, 0.55, 0.55)
+  y3 <- c(0.45, 0.55, 0.55, 0.60, 0.50, 0.40, 0.45)
+
+  xpool <- c(x1, x2, x3)
+  ypool <- c(y1, y2, y3)
+
+  if(!is.null(id)){
+    id_pool <- id + c( rep(3, length(x1)), c(rep(1,9),rep(2,4)),
+                       rep(4, length(x3)))
+  }else{
+    id_pool <- c( rep(3, length(x1)), c(rep(1,9),rep(2,4)),
+                  rep(4, length(x3)))
+  }
+
+  fill=c("green","white", "red", "grey80")
+
+  x <- x.pos + wt*xpool
+  y <- y.pos + ht*ypool
+
+  list(x=x,y=y,id=id_pool,fill=fill)
+}
+
+################# add letters to logo plot #########################
+
+
+addLetter2 <- function(letters,which,x.pos,y.pos,ht,wt){
+
+  if (which == "A"){
+    letter <- letterA(x.pos,y.pos,ht,wt)
+  }else if (which == "C"){
+    letter <- letterC(x.pos,y.pos,ht,wt)
+  }else if (which == "G"){
+    letter <- letterG(x.pos,y.pos,ht,wt)
+  }else if (which == "X"){
+    letter <- letterX(x.pos,y.pos,ht,wt)
+  }else if (which == "T"){
+    letter <- letterT(x.pos,y.pos,ht,wt)
+  }else if (which == "C->T"){
+    letter <- letter_C_to_T(x.pos,y.pos,ht,wt)
+  }else if (which == "C->A"){
+    letter <- letter_C_to_A(x.pos,y.pos,ht,wt)
+  }else if (which == "C->G"){
+    letter <- letter_C_to_G(x.pos,y.pos,ht,wt)
+  }else if (which == "T->A"){
+    letter <- letter_T_to_A(x.pos,y.pos,ht,wt)
+  }else if (which == "T->G"){
+    letter <- letter_T_to_G(x.pos,y.pos,ht,wt)
+  }else if (which == "T->C"){
+    letter <- letter_T_to_C(x.pos,y.pos,ht,wt)
+  }else{
+    stop("which must be one of A,C,G,T,X, C->T,
+         C->G, C->A, T->A, T->C, T->G")
+  }
+
+  letters$x <- c(letters$x,letter$x)
+  letters$y <- c(letters$y,letter$y)
+
+  lastID <- ifelse(is.null(letters$id),0,max(letters$id))
+  letters$id <- c(letters$id,lastID+letter$id)
+  letters$fill <- c(letters$fill,letter$fill)
+  letters
+  }
+
+
+plot_graph <- function(probs, max_pos, max_prob, col="red",
+                       cex=unit(1, "npc"), pch=unit(16,"npc"),
+                       xlab="position", ylab="prob. of mutation",
+                       main="",
+                       cex.axis=unit(1, "npc"),
+                       cex.main=unit(1, "npc")){
+  # if (length(probs) != max_pos){
+  #   stop(cat('probability vector must be of length ', max_pos))
+  # }
+  par(font.axis = 2)
+  plot(as.numeric(names(probs)), probs/max_prob, xlim = c(0, max_pos), ylim=c(0,1),
+       type = "b", xaxt = "n", yaxt = "n", cex = cex, pch=pch, col=col, main=main,
+       cex.main=cex.main, ylab="", xlab="")
+  axis(side = 1, at = floor(seq(1, max_pos, length.out=5)), cex.axis = cex.axis, lwd.ticks = 1, tck=-0.05,
+       cex.lab=1, mgp=c(1, 0.5, 0))
+  title(xlab = xlab, mgp=c(1.5,1,0), cex.lab=1.2)
+  ylimit <- c(0.0, 0.5, 1.0)*max_prob
+  axis(side = 2, at = c(0.0, 0.5, 1.0), labels = round(ylimit,2), cex.axis = cex.axis, lwd.ticks=1, tck=-0.05,
+       cex.lab=1, mgp=c(1, 0.5, 0))
+  title(ylab = ylab, mgp=c(1.8,1,0), cex.lab=1.2)
+}
+
 
