@@ -53,27 +53,35 @@ damageLogo_five <- function(theta_pool,
                             xlab = " ",
                             xaxis_fontsize=5,
                             xlab_fontsize=10,
+                            title_aligner = 8,
                             y_fontsize=10,
+                            title_fontsize = 20,
                             mut_width=2,
                             start=0.0001,
                             renyi_alpha = 1,
                             pop_names=paste0("Cluster ",1:dim(theta_pool)[2]),
-                            logoport_x = 0.28,
+                            logoport_x = 0.25,
                             logoport_y= 0.50,
-                            logoport_width= 0.30,
+                            logoport_width= 0.28,
                             logoport_height= 0.40,
-                            lineport_x = 0.72,
-                            lineport_y=0.34,
-                            lineport_width=0.25,
-                            lineport_height=0.25,
+                            lineport_x = 0.9,
+                            lineport_y=0.40,
+                            lineport_width=0.32,
+                            lineport_height=0.28,
                             breaklogoport_x = 1.00,
                             breaklogoport_y = 0.40,
                             breaklogoport_width=0.40,
                             breaklogoport_height=0.50,
-                            barport_x = 0.60,
+                            barport_x = 0.58,
                             barport_y=0.60,
-                            barport_width=0.30,
-                            barport_height=0.25){
+                            barport_width=0.25,
+                            barport_height=0.25,
+                            output_dir = NULL,
+                            output_width = 1200,
+                            output_height = 700,
+                            save_plot=TRUE){
+  
+  if(is.null(output_dir)){output_dir <- getwd();}
   flag <- 0
   if(dim(theta_pool)[2] == 1){
     flag = 1
@@ -152,6 +160,8 @@ damageLogo_five <- function(theta_pool,
   grob_list <- list()
   if(flag == 1){
     l = 1
+    if(save_plot){
+    png(paste0(output_dir, "logo_", pop_names[l], ".png"), width=output_width, height = output_height)
     damageLogo.pos.str.skeleton(pwm = prop_patterns_list[[l]],
                                 probs = prob_mutation[l,],
                                 breaks_theta_vec = breaks_theta[,l, drop=FALSE],
@@ -166,7 +176,9 @@ damageLogo_five <- function(theta_pool,
                                 yaxis=yaxis,
                                 xaxis_fontsize=xaxis_fontsize,
                                 xlab_fontsize=xlab_fontsize,
+                                title_aligner = title_aligner,
                                 y_fontsize=y_fontsize,
+                                title_fontsize = title_fontsize,
                                 mut_width=mut_width,
                                 start=start,
                                 pop_name = pop_names[l],
@@ -186,8 +198,11 @@ damageLogo_five <- function(theta_pool,
                                 barport_y = barport_y,
                                 barport_width = barport_width,
                                 barport_height = barport_height)
-  } else {
-    for(l in 1:length(prop_patterns_list)){
+    dev.off()
+    }else{
+      l=1
+      par(new=TRUE)
+      grid.newpage()
       damageLogo.pos.str.skeleton(pwm = prop_patterns_list[[l]],
                                   probs = prob_mutation[l,],
                                   breaks_theta_vec = breaks_theta[,l, drop=FALSE],
@@ -202,7 +217,9 @@ damageLogo_five <- function(theta_pool,
                                   yaxis=yaxis,
                                   xaxis_fontsize=xaxis_fontsize,
                                   xlab_fontsize=xlab_fontsize,
+                                  title_aligner = title_aligner,
                                   y_fontsize=y_fontsize,
+                                  title_fontsize = title_fontsize,
                                   mut_width=mut_width,
                                   start=start,
                                   pop_name = pop_names[l],
@@ -223,6 +240,86 @@ damageLogo_five <- function(theta_pool,
                                   barport_width = barport_width,
                                   barport_height = barport_height)
     }
+  } else {
+    for(l in 1:length(prop_patterns_list)){
+      if(save_plot){
+        png(paste0(output_dir, "logo_", l, ".png"), width=output_width, height = output_height)
+        damageLogo.pos.str.skeleton(pwm = prop_patterns_list[[l]],
+                                    probs = prob_mutation[l,],
+                                    breaks_theta_vec = breaks_theta[,l, drop=FALSE],
+                                    strand_theta_vec = strand_theta[l,],
+                                    ic = ic[,l],
+                                    max_pos = max_pos,
+                                    max_prob = max_prob,
+                                    ic.scale = ic.scale,
+                                    yscale_change = yscale_change,
+                                    xlab = xlab,
+                                    xaxis=xaxis,
+                                    yaxis=yaxis,
+                                    xaxis_fontsize=xaxis_fontsize,
+                                    xlab_fontsize=xlab_fontsize,
+                                    title_aligner = title_aligner,
+                                    y_fontsize=y_fontsize,
+                                    title_fontsize = title_fontsize,
+                                    mut_width=mut_width,
+                                    start=start,
+                                    pop_name = pop_names[l],
+                                    logoport_x = logoport_x,
+                                    logoport_y= logoport_y,
+                                    logoport_width= logoport_width,
+                                    logoport_height= logoport_height,
+                                    lineport_x = lineport_x,
+                                    lineport_y= lineport_y,
+                                    lineport_width=lineport_width,
+                                    lineport_height=lineport_height,
+                                    breaklogoport_x = breaklogoport_x,
+                                    breaklogoport_y = breaklogoport_y,
+                                    breaklogoport_width=breaklogoport_width,
+                                    breaklogoport_height=breaklogoport_height,
+                                    barport_x = barport_x,
+                                    barport_y = barport_y,
+                                    barport_width = barport_width,
+                                    barport_height = barport_height)
+        dev.off()
+      }else{
+        damageLogo.pos.str.skeleton(pwm = prop_patterns_list[[l]],
+                                    probs = prob_mutation[l,],
+                                    breaks_theta_vec = breaks_theta[,l, drop=FALSE],
+                                    strand_theta_vec = strand_theta[l,],
+                                    ic = ic[,l],
+                                    max_pos = max_pos,
+                                    max_prob = max_prob,
+                                    ic.scale = ic.scale,
+                                    yscale_change = yscale_change,
+                                    xlab = xlab,
+                                    xaxis=xaxis,
+                                    yaxis=yaxis,
+                                    xaxis_fontsize=xaxis_fontsize,
+                                    xlab_fontsize=xlab_fontsize,
+                                    title_aligner = title_aligner,
+                                    y_fontsize=y_fontsize,
+                                    title_fontsize = title_fontsize,
+                                    mut_width=mut_width,
+                                    start=start,
+                                    pop_name = pop_names[l],
+                                    logoport_x = logoport_x,
+                                    logoport_y= logoport_y,
+                                    logoport_width= logoport_width,
+                                    logoport_height= logoport_height,
+                                    lineport_x = lineport_x,
+                                    lineport_y= lineport_y,
+                                    lineport_width=lineport_width,
+                                    lineport_height=lineport_height,
+                                    breaklogoport_x = breaklogoport_x,
+                                    breaklogoport_y = breaklogoport_y,
+                                    breaklogoport_width=breaklogoport_width,
+                                    breaklogoport_height=breaklogoport_height,
+                                    barport_x = barport_x,
+                                    barport_y = barport_y,
+                                    barport_width = barport_width,
+                                    barport_height = barport_height)
+      }
+    }
   }
 }
 
@@ -239,15 +336,17 @@ damageLogo.pos.str.skeleton <- function(pwm,
                                         yaxis=TRUE,
                                         xaxis_fontsize=10,
                                         xlab_fontsize=15,
+                                        title_aligner = 8,
                                         y_fontsize=15,
+                                        title_fontsize = 20,
                                         mut_width=2,
                                         start=0.0001,
                                         yscale_change=TRUE,
                                         pop_name = NULL,
-                                        logoport_x=0.3,
+                                        logoport_x=0.25,
                                         logoport_y= 0.5,
                                         logoport_width= 0.3,
-                                        logoport_height= 0.8,
+                                        logoport_height= 0.9,
                                         lineport_x = 0.6,
                                         lineport_y=0.25,
                                         lineport_width=0.30,
@@ -255,7 +354,7 @@ damageLogo.pos.str.skeleton <- function(pwm,
                                         breaklogoport_x = 1,
                                         breaklogoport_y = 0.50,
                                         breaklogoport_width=0.40,
-                                        breaklogoport_height=0.40,
+                                        breaklogoport_height=0.35,
                                         barport_x = 0.5,
                                         barport_y=0.80,
                                         barport_width=0.25,
@@ -331,7 +430,7 @@ damageLogo.pos.str.skeleton <- function(pwm,
       }
     }}
 
-
+  plot.new()
   grid::grid.newpage()
   vp <- viewport(x=logoport_x, y=logoport_y, width=logoport_width, height=logoport_height)
   pushViewport(vp)
@@ -361,11 +460,11 @@ damageLogo.pos.str.skeleton <- function(pwm,
   }
 
   if(is.null(pop_name)){
-    grid.text("Logo plot", y = unit(1, "npc") + unit(1.5, "lines"),
-              gp = gpar(fontsize = 16))
+    grid.text("Logo plot", y = unit(1, "npc") + unit(title_aligner, "lines"),
+              gp = gpar(fontsize = title_fontsize))
   }else{
-    grid.text(paste0(pop_name), x = unit(1.3, "npc"), y = unit(8, "lines"),
-              gp = gpar(fontsize = 20, col="black"))
+    grid.text(paste0(pop_name), x = unit(1.3, "npc"), y = unit(title_aligner, "lines"),
+              gp = gpar(fontsize = title_fontsize, col="black"))
   }
 
   if (xaxis){
